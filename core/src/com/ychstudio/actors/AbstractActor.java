@@ -20,5 +20,8 @@ public abstract class AbstractActor {
     }
     
     public abstract void update(float delta);
-    public abstract void draw(SpriteBatch batch);
+    
+    public void draw(SpriteBatch batch) {
+        sprite.draw(batch);
+    };
 }

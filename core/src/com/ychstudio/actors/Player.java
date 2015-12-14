@@ -6,7 +6,6 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -15,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 
 public class Player extends RigidBodyActor {
@@ -78,6 +78,18 @@ public class Player extends RigidBodyActor {
     @Override
     public void update(float delta) {
         stateTime += delta;
+        
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+            if (faceRight) {
+                tmpV.set(1, 0);
+                actorBuilder.createBullet(x + 0.7f, y - 0.2f, tmpV);
+            }
+            else {
+                tmpV.set(-1, 0);
+                actorBuilder.createBullet(x - 0.7f, y - 0.2f, tmpV);
+            }
+        }
 
         if (Gdx.input.isKeyPressed(Input.Keys.W) || Gdx.input.isKeyPressed(Input.Keys.UP)) {
             body.applyLinearImpulse(tmpV.set(0, speed), body.getWorldCenter(), true);
@@ -112,12 +124,6 @@ public class Player extends RigidBodyActor {
         y = body.getPosition().y;
 
         sprite.setPosition(x - width / 2f, y - height / 2f);
-    }
-
-    @Override
-    public void draw(SpriteBatch batch) {
-        
-        sprite.draw(batch);
     }
 
 }

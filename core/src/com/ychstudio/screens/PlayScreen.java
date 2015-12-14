@@ -6,7 +6,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -15,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.ychstudio.actors.AbstractActor;
-import com.ychstudio.actors.Player;
+import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 import com.ychstudio.loaders.MapLoader;
 
@@ -35,7 +34,7 @@ public class PlayScreen implements Screen {
     private Box2DDebugRenderer box2DDebugRenderer;
     private boolean showBox2DDebugRenderer = true;
     
-    Array<AbstractActor> actors;
+    Array<AbstractActor> actorList;
     
     @Override
     public void show() {
@@ -47,11 +46,11 @@ public class PlayScreen implements Screen {
         
         world = new World(new Vector2(0, -9.8f), true);
         
-        actors = GM.getActorList();
-        actors.clear();
+        actorList = GM.getActorList();
+        actorList.clear();
         
-        TextureAtlas textureAtlas = GM.getAssetManager().get("img/actors.pack", TextureAtlas.class);
-        actors.add(new Player(world, textureAtlas.findRegion("Gunner"), 6, 6, 32 / GM.PPM, 32 / GM.PPM));
+        ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+        actorBuilder.createPlayer(6f, 6f);
         
         TiledMap map = MapLoader.loadTiledMap("map_01.tmx", world);
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / GM.PPM, batch);
@@ -66,7 +65,7 @@ public class PlayScreen implements Screen {
         }
         
         
-        for (AbstractActor actor : actors) {
+        for (AbstractActor actor : actorList) {
             actor.update(delta);
         }
     }
@@ -84,7 +83,7 @@ public class PlayScreen implements Screen {
         mapRenderer.setView(camera);
         mapRenderer.render();
         batch.begin();
-        for (AbstractActor actor : actors) {
+        for (AbstractActor actor : actorList) {
             actor.draw(batch);
         }
         batch.end();       
@@ -117,6 +116,7 @@ public class PlayScreen implements Screen {
     @Override
     public void dispose() {
         batch.dispose();
+        world.dispose();
         mapRenderer.dispose();
     }
 
