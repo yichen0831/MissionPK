@@ -1,5 +1,7 @@
 package com.ychstudio.screens;
 
+import java.util.Iterator;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -64,9 +66,13 @@ public class PlayScreen implements Screen {
             showBox2DDebugRenderer = !showBox2DDebugRenderer;
         }
         
-        
-        for (AbstractActor actor : actorList) {
-            actor.update(delta);
+        for(Iterator<AbstractActor> iter = actorList.iterator(); iter.hasNext();) {
+            AbstractActor actor = iter.next();
+            if (actor.isToBeRemoved()) {
+                iter.remove();
+            } else {
+              actor.update(delta);  
+            }
         }
     }
 

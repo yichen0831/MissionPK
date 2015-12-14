@@ -10,6 +10,8 @@ public abstract class AbstractActor {
     protected float x, y;
     protected float width, height;
     
+    protected boolean toBeRemoved = false;
+    
     public AbstractActor(TextureRegion textureRegion, float x, float y, float width, float height) {
         sprite = new Sprite(textureRegion);
         sprite.setBounds(x, y, width, height);
@@ -24,4 +26,8 @@ public abstract class AbstractActor {
     public void draw(SpriteBatch batch) {
         sprite.draw(batch);
     };
+    
+    public boolean isToBeRemoved() {
+        return toBeRemoved;
+    }
 }

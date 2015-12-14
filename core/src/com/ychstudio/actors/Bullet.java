@@ -101,6 +101,11 @@ public class Bullet extends RigidBodyActor {
         y = body.getPosition().y;
         
         sprite.setPosition(x - width / 2f, y - height / 2f);
+        
+        if (stateTime > 10f) {
+            world.destroyBody(body);
+            toBeRemoved = true;
+        }
     }
 
 
