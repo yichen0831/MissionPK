@@ -16,30 +16,33 @@ public class WorldContactListener implements ContactListener {
     public void beginContact(Contact contact) {
         Fixture fixtureA = contact.getFixtureA();
         Fixture fixtureB = contact.getFixtureB();
-        
+
         short categoryA = fixtureA.getFilterData().categoryBits;
         short categoryB = fixtureB.getFilterData().categoryBits;
-        
+
         Body bodyA = fixtureA.getBody();
         Body bodyB = fixtureB.getBody();
-        
+
         if (categoryA == GM.BULLET_BIT || categoryB == GM.BULLET_BIT) {
             if (categoryA == GM.BULLET_BIT) {
                 Bullet bullet = (Bullet) bodyA.getUserData();
-                bullet.getDamaged(1);
-                
-                RigidBodyActor other = (RigidBodyActor) bodyB.getUserData();
-                if (other instanceof Damagable) {
-                    ((Damagable)other).getDamaged(1);
+                if (bullet.isAlive()) {
+                    bullet.getDamaged(1);
+
+                    RigidBodyActor other = (RigidBodyActor) bodyB.getUserData();
+                    if (other instanceof Damagable) {
+                        ((Damagable) other).getDamaged(1);
+                    }
                 }
-            }
-            else {
+            } else {
                 Bullet bullet = (Bullet) bodyB.getUserData();
-                bullet.getDamaged(1);
-                
-                RigidBodyActor other = (RigidBodyActor) bodyA.getUserData();
-                if (other instanceof Damagable) {
-                    ((Damagable)other).getDamaged(1);
+                if (bullet.isAlive()) {
+                    bullet.getDamaged(1);
+
+                    RigidBodyActor other = (RigidBodyActor) bodyA.getUserData();
+                    if (other instanceof Damagable) {
+                        ((Damagable) other).getDamaged(1);
+                    }
                 }
             }
         }
@@ -47,17 +50,17 @@ public class WorldContactListener implements ContactListener {
 
     @Override
     public void endContact(Contact contact) {
-        
+
     }
 
     @Override
     public void preSolve(Contact contact, Manifold oldManifold) {
-        
+
     }
 
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
-        
+
     }
 
 }

@@ -56,7 +56,7 @@ public class Bullet extends RigidBodyActor implements Damagable {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
         fixtureDef.filter.categoryBits = GM.BULLET_BIT;
-        fixtureDef.filter.maskBits = GM.OBSTACLE_BIT | GM.PLAYER_BIT | GM.BULLET_BIT;
+        fixtureDef.filter.maskBits = GM.BULLET_MASK_BITS;
         
         body.createFixture(fixtureDef);
         
@@ -106,7 +106,7 @@ public class Bullet extends RigidBodyActor implements Damagable {
             if(state != State.EXPLODE) {
                 stateTime = 0;
                 state = State.EXPLODE;
-                
+                body.setLinearVelocity(0, 0);
                 for (Fixture fixture : body.getFixtureList()) {
                     Filter filter = fixture.getFilterData();
                     filter.categoryBits = GM.NOTHING_BIT;
@@ -136,6 +136,10 @@ public class Bullet extends RigidBodyActor implements Damagable {
         
         sprite.setPosition(x - width / 2f, y - height / 2f);
         
+    }
+    
+    public boolean isAlive() {
+        return hp > 0;
     }
     
     @Override

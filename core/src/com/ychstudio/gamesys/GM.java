@@ -11,10 +11,16 @@ import com.ychstudio.actors.AbstractActor;
 public class GM {
     private static final GM instance = new GM();
     
+    // category bits
     public static final short NOTHING_BIT = 0;
     public static final short PLAYER_BIT = 1 << 0;
     public static final short OBSTACLE_BIT = 1 << 1;
     public static final short BULLET_BIT = 1 << 2;
+    
+    // mask bits
+    public static final short PLAYER_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT;
+    public static final short OBSTACLE_MASK_BITS = PLAYER_BIT | BULLET_BIT;
+    public static final short BULLET_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT;
     
     public static final float PPM = 32;
 
@@ -28,7 +34,8 @@ public class GM {
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
         
         assetManager.load("img/actors.pack", TextureAtlas.class);
-        assetManager.load("maps/map_01.tmx", TiledMap.class);
+        assetManager.load("img/tiles.pack", TextureAtlas.class);
+        assetManager.load("maps/level_01.tmx", TiledMap.class);
         assetManager.finishLoading();
         
         actorList = new Array<>();

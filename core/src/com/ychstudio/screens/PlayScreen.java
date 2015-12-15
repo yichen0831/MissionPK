@@ -8,8 +8,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -32,8 +30,6 @@ public class PlayScreen implements Screen {
     private SpriteBatch batch;
     
     private World world;
-    
-    private OrthogonalTiledMapRenderer mapRenderer;
     
     private Box2DDebugRenderer box2DDebugRenderer;
     private boolean showBox2DDebugRenderer = true;
@@ -59,8 +55,7 @@ public class PlayScreen implements Screen {
         ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
         actorBuilder.createPlayer(6f, 6f);
         
-        TiledMap map = MapLoader.loadTiledMap("map_01.tmx", world);
-        mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / GM.PPM, batch);
+        MapLoader.loadTiledMap("level_01.tmx", world);
         
         box2DDebugRenderer = new Box2DDebugRenderer();
         
@@ -94,8 +89,6 @@ public class PlayScreen implements Screen {
         update(delta);
         
         batch.setProjectionMatrix(camera.combined);
-        mapRenderer.setView(camera);
-        mapRenderer.render();
         batch.begin();
         for (AbstractActor actor : actorList) {
             actor.draw(batch);
@@ -133,7 +126,6 @@ public class PlayScreen implements Screen {
     public void dispose() {
         batch.dispose();
         world.dispose();
-        mapRenderer.dispose();
         infoGUI.dispose();
     }
 

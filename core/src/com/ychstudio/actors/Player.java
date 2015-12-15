@@ -68,13 +68,13 @@ public class Player extends RigidBodyActor implements Damagable {
         body.setUserData(this);
 
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(RADIUS / 1.6f);
+        circleShape.setRadius(RADIUS / 1.5f);
         circleShape.setPosition(tmpV1.set(0, 0.1f));
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circleShape;
         fixtureDef.filter.categoryBits = GM.PLAYER_BIT;
-        fixtureDef.filter.maskBits = GM.OBSTACLE_BIT | GM.BULLET_BIT | GM.PLAYER_BIT;
+        fixtureDef.filter.maskBits = GM.PLAYER_MASK_BITS;
 
         body.createFixture(fixtureDef);
         
@@ -84,7 +84,7 @@ public class Player extends RigidBodyActor implements Damagable {
         circleShape.dispose();
         
         EdgeShape edgeShape = new EdgeShape();
-        edgeShape.set(-RADIUS, -(RADIUS + 0.05f), RADIUS, -(RADIUS + 0.05f));
+        edgeShape.set(-(RADIUS / 1.6f), -(RADIUS + 0.05f), (RADIUS / 1.6f), -(RADIUS + 0.05f));
         
         fixtureDef.shape = edgeShape;
         body.createFixture(fixtureDef);
@@ -230,7 +230,7 @@ public class Player extends RigidBodyActor implements Damagable {
                 }
                 break;
             case DIE:
-                // TODO: add animation
+                // TODO add animation
                 break;
             case IDLE:
             default:
@@ -255,13 +255,12 @@ public class Player extends RigidBodyActor implements Damagable {
 
     private boolean checkGrounded() {
         grounded = false;
-        final Player player = this;
 
         RayCastCallback rayCastCallback = new RayCastCallback() {
 
             @Override
             public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-                if (fixture.getBody().getUserData() != null && fixture.getBody().getUserData().equals(player)) {
+                if (fixture.getBody().equals(body)) {
                     return 1;
                 }
                 short categoryBits = fixture.getFilterData().categoryBits;
