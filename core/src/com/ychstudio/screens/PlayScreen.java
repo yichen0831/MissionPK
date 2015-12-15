@@ -19,6 +19,7 @@ import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 import com.ychstudio.gamesys.WorldContactListener;
+import com.ychstudio.gui.InfoGUI;
 import com.ychstudio.loaders.MapLoader;
 
 public class PlayScreen implements Screen {
@@ -37,7 +38,9 @@ public class PlayScreen implements Screen {
     private Box2DDebugRenderer box2DDebugRenderer;
     private boolean showBox2DDebugRenderer = true;
     
-    Array<AbstractActor> actorList;
+    private Array<AbstractActor> actorList;
+    
+    private InfoGUI infoGUI;
     
     @Override
     public void show() {
@@ -47,7 +50,7 @@ public class PlayScreen implements Screen {
         viewport = new FitViewport(WIDTH, HEIGHT, camera);
         camera.translate(WIDTH / 2f, HEIGHT / 2f);
         
-        world = new World(new Vector2(0, -9.8f), true);
+        world = new World(new Vector2(0, -20f), true);
         world.setContactListener(new WorldContactListener());
 
         actorList = GM.getActorList();
@@ -60,6 +63,8 @@ public class PlayScreen implements Screen {
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1 / GM.PPM, batch);
         
         box2DDebugRenderer = new Box2DDebugRenderer();
+        
+        infoGUI = new InfoGUI();
     }
     
     
@@ -100,6 +105,8 @@ public class PlayScreen implements Screen {
         if (showBox2DDebugRenderer) {
             box2DDebugRenderer.render(world, camera.combined);
         }
+        
+        infoGUI.draw();
     }
 
     @Override
@@ -127,6 +134,7 @@ public class PlayScreen implements Screen {
         batch.dispose();
         world.dispose();
         mapRenderer.dispose();
+        infoGUI.dispose();
     }
 
 }

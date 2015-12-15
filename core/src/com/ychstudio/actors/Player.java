@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
@@ -27,9 +28,10 @@ public class Player extends RigidBodyActor implements Damagable {
 
     private static final float RADIUS = 0.45f;
 
-    private float moveForce = 1f;
+    private float moveForceGround = 1f;
+    private float moveForceAir = 0.5f;
     private float speed = 4f;
-    private float jumpForce = 2f;
+    private float jumpForce = 7.2f;
 
     private int hp = 30;
 
@@ -66,7 +68,8 @@ public class Player extends RigidBodyActor implements Damagable {
         body.setUserData(this);
 
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(RADIUS);
+        circleShape.setRadius(RADIUS / 1.6f);
+        circleShape.setPosition(tmpV1.set(0, 0.1f));
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circleShape;
@@ -74,7 +77,19 @@ public class Player extends RigidBodyActor implements Damagable {
         fixtureDef.filter.maskBits = GM.OBSTACLE_BIT | GM.BULLET_BIT | GM.PLAYER_BIT;
 
         body.createFixture(fixtureDef);
+        
+        circleShape.setPosition(tmpV1.set(0, -0.16f));
+        body.createFixture(fixtureDef);
+        
         circleShape.dispose();
+        
+        EdgeShape edgeShape = new EdgeShape();
+        edgeShape.set(-RADIUS, -(RADIUS + 0.05f), RADIUS, -(RADIUS + 0.05f));
+        
+        fixtureDef.shape = edgeShape;
+        body.createFixture(fixtureDef);
+        
+        edgeShape.dispose();
 
         animMap = new HashMap<>();
         Array<TextureRegion> keyFrames = new Array<>();
@@ -118,7 +133,7 @@ public class Player extends RigidBodyActor implements Damagable {
             checkGrounded();
 
             // fire
-            if (Gdx.input.isKeyPressed(Input.Keys.W) && bullet_cd <= 0) {
+            if (Gdx.input.isKeyPressed(Input.Keys.X) && bullet_cd <= 0) {
                 bullet_cd = BULLET_CD;
                 fire = true;
                 ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
@@ -132,12 +147,12 @@ public class Player extends RigidBodyActor implements Damagable {
             }
 
             // jump
-            if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
                 if (grounded) {
                     body.applyLinearImpulse(tmpV1.set(0, jumpForce), body.getWorldCenter(), true);
                 }
             }
-
+            
             if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
                 // body.applyLinearImpulse(tmpV1.set(0, -speed),
                 // body.getWorldCenter(), true);
@@ -145,7 +160,12 @@ public class Player extends RigidBodyActor implements Damagable {
 
             // move left
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-                body.applyLinearImpulse(tmpV1.set(-moveForce, 0), body.getWorldCenter(), true);
+                if (grounded) {
+                    body.applyLinearImpulse(tmpV1.set(-moveForceGround, 0), body.getWorldCenter(), true);
+                }
+                else {
+                    body.applyLinearImpulse(tmpV1.set(-moveForceAir, 0), body.getWorldCenter(), true);
+                }
                 if (body.getLinearVelocity().x < -speed) {
                     body.setLinearVelocity(-speed, body.getLinearVelocity().y);
                 }
@@ -153,7 +173,12 @@ public class Player extends RigidBodyActor implements Damagable {
 
             // move right
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                body.applyLinearImpulse(tmpV1.set(moveForce, 0), body.getWorldCenter(), true);
+                if (grounded) {
+                    body.applyLinearImpulse(tmpV1.set(moveForceGround, 0), body.getWorldCenter(), true);
+                }
+                else {
+                    body.applyLinearImpulse(tmpV1.set(moveForceAir, 0), body.getWorldCenter(), true);
+                }
                 if (body.getLinearVelocity().x > speed) {
                     body.setLinearVelocity(speed, body.getLinearVelocity().y);
                 }
@@ -230,18 +255,25 @@ public class Player extends RigidBodyActor implements Damagable {
 
     private boolean checkGrounded() {
         grounded = false;
+        final Player player = this;
 
         RayCastCallback rayCastCallback = new RayCastCallback() {
 
             @Override
             public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-                grounded = true;
+                if (fixture.getBody().getUserData() != null && fixture.getBody().getUserData().equals(player)) {
+                    return 1;
+                }
+                short categoryBits = fixture.getFilterData().categoryBits;
+                if (categoryBits == GM.OBSTACLE_BIT || categoryBits == GM.PLAYER_BIT) {
+                    grounded = true;
+                }
                 return 0;
             }
         };
 
         for (int i = -1; i < 1; i++) {
-            tmpV1.set(body.getPosition().x + i * RADIUS, body.getPosition().y);
+            tmpV1.set(body.getPosition().x + i * (RADIUS - 0.1f), body.getPosition().y);
             tmpV2.set(tmpV1.x, tmpV1.y - (RADIUS + 0.2f));
             world.rayCast(rayCastCallback, tmpV1, tmpV2);
         }
