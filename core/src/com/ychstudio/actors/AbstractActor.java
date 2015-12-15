@@ -3,14 +3,15 @@ package com.ychstudio.actors;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Disposable;
 
-public abstract class AbstractActor {
+public abstract class AbstractActor implements Disposable {
     
     protected Sprite sprite;
     protected float x, y;
     protected float width, height;
     
-    protected boolean toBeRemoved = false;
+    protected boolean removed = false;
     
     public AbstractActor(TextureRegion textureRegion, float x, float y, float width, float height) {
         sprite = new Sprite(textureRegion);
@@ -27,7 +28,11 @@ public abstract class AbstractActor {
         sprite.draw(batch);
     };
     
+    public void queue_remove() {
+        removed = true;
+    }
+    
     public boolean isToBeRemoved() {
-        return toBeRemoved;
+        return removed;
     }
 }

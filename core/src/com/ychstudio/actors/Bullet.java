@@ -10,25 +10,32 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Filter;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.ychstudio.gamesys.GM;
 
-public class Bullet extends RigidBodyActor {
+public class Bullet extends RigidBodyActor implements Damagable {
 
     public enum State {
         FLY,
         EXPLODE
     }
     
-    private static final float radius = 0.2f;
-    private static final float speed = 12f;
+    private static final float RADIUS = 0.1f;
+    private static final float SPEED = 12f;
+    
+    private int hp = 1;
     
     private Map<String, Animation> animMap;
     private Animation animation;
     
     private float stateTime = 0;
+    private boolean explode = false;
+    
+    private State state = State.FLY;
     
     private final Vector2 tmpV = new Vector2();
     
@@ -38,12 +45,13 @@ public class Bullet extends RigidBodyActor {
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DynamicBody;
         bodyDef.position.set(x, y);
-        bodyDef.gravityScale = 0.1f;
+        bodyDef.gravityScale = 0f;
         
         body = world.createBody(bodyDef);
+        body.setUserData(this);
         
         CircleShape shape = new CircleShape();
-        shape.setRadius(radius);
+        shape.setRadius(RADIUS);
         
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
@@ -71,7 +79,7 @@ public class Bullet extends RigidBodyActor {
             keyFrames.add(new TextureRegion(textureRegion, 32 *i, 0, 32, 32));
         }
         
-        animation = new Animation(0.1f, keyFrames, PlayMode.NORMAL);
+        animation = new Animation(0.05f, keyFrames, PlayMode.NORMAL);
         animMap.put("explode", animation);
         
     }
@@ -82,7 +90,7 @@ public class Bullet extends RigidBodyActor {
     
     public void setDirection(float x, float y) {
         tmpV.set(x, y);
-        tmpV.setLength2(speed * speed);
+        tmpV.setLength2(SPEED * SPEED);
         body.setLinearVelocity(tmpV);
     }
 
@@ -90,22 +98,54 @@ public class Bullet extends RigidBodyActor {
     public void update(float delta) {
         stateTime += delta;
         
-        animation = animMap.get("fly");
+        if (hp <= 0 || stateTime > 10f) {
+            explode = true;
+        }
+        
+        if (explode) {
+            if(state != State.EXPLODE) {
+                stateTime = 0;
+                state = State.EXPLODE;
+                
+                for (Fixture fixture : body.getFixtureList()) {
+                    Filter filter = fixture.getFilterData();
+                    filter.categoryBits = GM.NOTHING_BIT;
+                    fixture.setFilterData(filter);
+                }
+            }
+        }
+        
+        switch (state) {
+            case EXPLODE:
+                animation = animMap.get("explode");
+                
+                if (animation.isAnimationFinished(stateTime)) {
+                    queue_remove();
+                }
+                break;
+            case FLY:
+            default:
+                animation = animMap.get("fly");
+                break;
+        }
         
         sprite.setRegion(animation.getKeyFrame(stateTime));
-        if (body.getLinearVelocity().x < 0) {
-            sprite.flip(true, false);
-        }
         
         x = body.getPosition().x;
         y = body.getPosition().y;
         
         sprite.setPosition(x - width / 2f, y - height / 2f);
         
-        if (stateTime > 10f) {
-            world.destroyBody(body);
-            toBeRemoved = true;
-        }
+    }
+    
+    @Override
+    public void dispose() {
+        world.destroyBody(body);
+    }
+
+    @Override
+    public void getDamaged(int damage) {
+        hp -= damage;
     }
 
 

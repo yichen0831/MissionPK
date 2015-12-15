@@ -18,12 +18,13 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
+import com.ychstudio.gamesys.WorldContactListener;
 import com.ychstudio.loaders.MapLoader;
 
 public class PlayScreen implements Screen {
 
-    private final float WIDTH = 32f;
-    private final float HEIGHT = 18f;
+    private final float WIDTH = 16f;
+    private final float HEIGHT = 9f;
     
     private FitViewport viewport;
     private OrthographicCamera camera;
@@ -47,7 +48,8 @@ public class PlayScreen implements Screen {
         camera.translate(WIDTH / 2f, HEIGHT / 2f);
         
         world = new World(new Vector2(0, -9.8f), true);
-        
+        world.setContactListener(new WorldContactListener());
+
         actorList = GM.getActorList();
         actorList.clear();
         
@@ -69,6 +71,7 @@ public class PlayScreen implements Screen {
         for(Iterator<AbstractActor> iter = actorList.iterator(); iter.hasNext();) {
             AbstractActor actor = iter.next();
             if (actor.isToBeRemoved()) {
+                actor.dispose();
                 iter.remove();
             } else {
               actor.update(delta);  

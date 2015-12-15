@@ -17,15 +17,20 @@ import com.badlogic.gdx.utils.Array;
 import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 
-public class Player extends RigidBodyActor {
+public class Player extends RigidBodyActor implements Damagable {
 
     public enum State {
         IDLE, WALK, JUMP, DIE,
     }
 
-    private final float radius = 0.45f;
+    private static final float RADIUS = 0.45f;
     
     private float speed = 6f;
+    
+    private int hp = 30;
+    
+    private static final float BULLET_CD = 0.2f;
+    private float bullet_cd = 0;
 
     private Map<String, Animation> animMap;
     private Animation animation;
@@ -43,9 +48,10 @@ public class Player extends RigidBodyActor {
         bodyDef.type = BodyType.DynamicBody;
         bodyDef.position.set(x, y);
         body = world.createBody(bodyDef);
+        body.setUserData(this);
 
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(radius);
+        circleShape.setRadius(RADIUS);
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circleShape;
@@ -53,7 +59,6 @@ public class Player extends RigidBodyActor {
         fixtureDef.filter.maskBits = GM.OBSTACLE_BIT | GM.BULLET_BIT | GM.PLAYER_BIT;
 
         body.createFixture(fixtureDef);
-        body.setUserData(this);
         circleShape.dispose();
 
         animMap = new HashMap<>();
@@ -78,8 +83,15 @@ public class Player extends RigidBodyActor {
     @Override
     public void update(float delta) {
         stateTime += delta;
+        bullet_cd -= delta;
         
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        if (hp <= 0) {
+            // TODO: player dies
+        }
+        
+        // fire
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && bullet_cd <= 0) {
+            bullet_cd = BULLET_CD;
             ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
             if (faceRight) {
                 tmpV.set(1, 0);
@@ -124,6 +136,16 @@ public class Player extends RigidBodyActor {
         y = body.getPosition().y;
 
         sprite.setPosition(x - width / 2f, y - height / 2f);
+    }
+
+    @Override
+    public void getDamaged(int damage) {
+        hp -= damage;
+    }
+    
+    @Override
+    public void dispose() {
+        world.destroyBody(body);
     }
 
 }
