@@ -14,6 +14,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.ychstudio.actors.AbstractActor;
+import com.ychstudio.actors.tiles.TileActor;
 import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 import com.ychstudio.gamesys.WorldContactListener;
@@ -22,8 +23,8 @@ import com.ychstudio.loaders.MapLoader;
 
 public class PlayScreen implements Screen {
 
-    private final float WIDTH = 32f;
-    private final float HEIGHT = 16f;
+    private final float WIDTH = 16f;
+    private final float HEIGHT = 9f;
     
     private FitViewport viewport;
     private OrthographicCamera camera;
@@ -35,6 +36,7 @@ public class PlayScreen implements Screen {
     private boolean showBox2DDebugRenderer = true;
     
     private Array<AbstractActor> actorList;
+    private Array<TileActor> tileList;
     
     private InfoGUI infoGUI;
     
@@ -52,6 +54,8 @@ public class PlayScreen implements Screen {
         actorList = GM.getActorList();
         actorList.clear();
         
+        tileList = GM.getTileList();
+        
         ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
         actorBuilder.createPlayer(6f, 6f);
         
@@ -68,6 +72,16 @@ public class PlayScreen implements Screen {
             showBox2DDebugRenderer = !showBox2DDebugRenderer;
         }
         
+        for(Iterator<TileActor> iter = tileList.iterator(); iter.hasNext();) {
+            AbstractActor actor = iter.next();
+            if (actor.isToBeRemoved()) {
+                actor.dispose();
+                iter.remove();
+            } else {
+              actor.update(delta);  
+            }
+        }
+        
         for(Iterator<AbstractActor> iter = actorList.iterator(); iter.hasNext();) {
             AbstractActor actor = iter.next();
             if (actor.isToBeRemoved()) {
@@ -77,6 +91,7 @@ public class PlayScreen implements Screen {
               actor.update(delta);  
             }
         }
+        
     }
 
     @Override
@@ -90,6 +105,13 @@ public class PlayScreen implements Screen {
         
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+        
+        // draw tiles
+        for (TileActor actor : tileList) {
+            actor.draw(batch);
+        }
+        
+        // draw actors
         for (AbstractActor actor : actorList) {
             actor.draw(batch);
         }

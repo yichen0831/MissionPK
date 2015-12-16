@@ -28,7 +28,7 @@ public class Player extends RigidBodyActor implements Damagable {
 
     private static final float RADIUS = 0.3f;
 
-    private float moveForceGround = 1f;
+    private float moveForceGround = 0.8f;
     private float moveForceAir = 0.5f;
     private float speed = 4f;
     private float jumpForce = 7.2f;
@@ -87,6 +87,8 @@ public class Player extends RigidBodyActor implements Damagable {
         edgeShape.set(-RADIUS, -(RADIUS + 0.18f), RADIUS, -(RADIUS + 0.18f));
         
         fixtureDef.shape = edgeShape;
+        fixtureDef.friction = 0.5f;
+        fixtureDef.density = 0.5f;
         body.createFixture(fixtureDef);
         
         edgeShape.dispose();
@@ -116,6 +118,15 @@ public class Player extends RigidBodyActor implements Damagable {
         }
         animation = new Animation(BULLET_CD / 5f, keyFrames, Animation.PlayMode.NORMAL);
         animMap.put("fire", animation);
+        
+        keyFrames.clear();
+        
+        // jump
+        for (int i = 8; i < 12; i++) {
+            keyFrames.add(new TextureRegion(textureRegion, 32 * i, 0, 32, 32));
+        }
+        animation = new Animation(0.1f, keyFrames, Animation.PlayMode.NORMAL);
+        animMap.put("jump", animation);
 
     }
 
@@ -186,7 +197,7 @@ public class Player extends RigidBodyActor implements Damagable {
             
             // determine state 
             if (grounded) {
-                if (Math.abs(body.getLinearVelocity().x) > 0.2f) {
+                if (Math.abs(body.getLinearVelocity().x) > 0.05f) {
                     state = State.WALK;
                     fire = false; // skip fire animation
                 } else {
@@ -218,7 +229,7 @@ public class Player extends RigidBodyActor implements Damagable {
 
         switch (state) {
             case JUMP:
-                animation = animMap.get("idle");
+                animation = animMap.get("jump");
                 break;
             case WALK:
                 animation = animMap.get("move");
@@ -271,9 +282,9 @@ public class Player extends RigidBodyActor implements Damagable {
     private boolean checkGrounded() {
         grounded = false;
 
-        for (int i = -1; i < 1; i++) {
-            tmpV1.set(body.getPosition().x + i * (RADIUS - 0.1f), body.getPosition().y);
-            tmpV2.set(tmpV1.x, tmpV1.y - (RADIUS + 0.2f));
+        for (int i = -1; i <= 1; i++) {
+            tmpV1.set(body.getPosition().x + i * RADIUS, body.getPosition().y);
+            tmpV2.set(tmpV1.x, tmpV1.y - (RADIUS + 0.25f));
             world.rayCast(rayCastCallback, tmpV1, tmpV2);
         }
 

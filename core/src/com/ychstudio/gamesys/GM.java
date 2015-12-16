@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Array;
 import com.ychstudio.actors.AbstractActor;
+import com.ychstudio.actors.tiles.TileActor;
 
 public class GM {
     private static final GM instance = new GM();
@@ -28,7 +29,8 @@ public class GM {
 
     private AssetManager assetManager;
     
-    public Array<AbstractActor> actorList;
+    private Array<AbstractActor> actorList;
+    private Array<TileActor> tileList;
     
     private GM() {
 
@@ -41,6 +43,7 @@ public class GM {
         assetManager.finishLoading();
         
         actorList = new Array<>();
+        tileList = new Array<>();
     }
     
     public static GM getInstance() {
@@ -55,9 +58,14 @@ public class GM {
         return instance.actorList;
     }
     
+    public static Array<TileActor> getTileList() {
+        return instance.tileList;
+    }
+    
     public void dispose() {
         assetManager.dispose();
         actorList.clear();
+        tileList.clear();
     }
     
 }
