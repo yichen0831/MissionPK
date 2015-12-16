@@ -9,13 +9,13 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ychstudio.gamesys.GM;
 
-public class GrassTile extends RigidBodyActor implements Damagable {
+public class DirtTile extends RigidBodyActor implements Damagable {
 
-    private static final TextureRegion damagedTextureRegion = GM.getAssetManager().get("img/tiles.pack", TextureAtlas.class).findRegion("Grass2");
+    private static final TextureRegion damagedTextureRegion = GM.getAssetManager().get("img/tiles.pack", TextureAtlas.class).findRegion("Dirt2");
     private static final float fullHP = 20;
     int hp;
     
-    public GrassTile(World world, TextureRegion textureRegion, float x, float y, float width, float height, int hp) {
+    public DirtTile(World world, TextureRegion textureRegion, float x, float y, float width, float height, int hp) {
         super(world, textureRegion, x, y, width, height);
         this.hp = hp;
         
@@ -59,5 +59,4 @@ public class GrassTile extends RigidBodyActor implements Damagable {
     public void dispose() {
         world.destroyBody(body);
     }
-
 }

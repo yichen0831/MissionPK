@@ -84,7 +84,7 @@ public class Player extends RigidBodyActor implements Damagable {
         circleShape.dispose();
         
         EdgeShape edgeShape = new EdgeShape();
-        edgeShape.set(-(RADIUS - 0.1f), -(RADIUS + 0.18f), (RADIUS - 0.1f), -(RADIUS + 0.18f));
+        edgeShape.set(-RADIUS, -(RADIUS + 0.18f), RADIUS, -(RADIUS + 0.18f));
         
         fixtureDef.shape = edgeShape;
         body.createFixture(fixtureDef);

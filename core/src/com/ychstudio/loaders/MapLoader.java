@@ -14,7 +14,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.ychstudio.actors.GrassTile;
+import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 
 public class MapLoader {
@@ -22,18 +22,18 @@ public class MapLoader {
     private MapLoader(){};
     
     public static TiledMap loadTiledMap(String filename, World world) {
+        ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+        
         TiledMap tiledMap = GM.getAssetManager().get("maps/" + filename, TiledMap.class);
         
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("TileLayer1");
         if (tileLayer != null) {
-            float tileWidth = tileLayer.getTileWidth();
-            float tileHeight = tileLayer.getTileHeight();
+            float tileSize = tileLayer.getTileWidth() / GM.PPM;
+            float tileRatio = tileLayer.getTileWidth() / GM.PPM;
             
-            
-            
-            for (int i = 0; i < tileLayer.getHeight(); i++) {
-                for (int j = 0; j < tileLayer.getWidth(); j++) {
-                    Cell cell = tileLayer.getCell(j, i);
+            for (int j = 0; j < tileLayer.getHeight(); j++) {
+                for (int i = 0; i < tileLayer.getWidth(); i++) {
+                    Cell cell = tileLayer.getCell(i, j);
                     if (cell == null) {
                         continue;
                     }
@@ -41,13 +41,16 @@ public class MapLoader {
                     if (tile.getProperties().containsKey("Type")) {
                         switch ((String)tile.getProperties().get("Type")) {
                             case "Grass":
-                                // TODO use ActorBuilder
-                                GrassTile grassTile = new GrassTile(world, tile.getTextureRegion(), (j + 0.5f) / 2f, (i + 0.5f) / 2f, tileWidth / GM.PPM, tileHeight / GM.PPM, 60);
-                                GM.getActorList().add(grassTile);
+                                actorBuilder.createGrassTile(tile, (i + tileSize) * tileRatio, (j + tileSize) * tileRatio, tileSize, tileSize);
                                 break;
                             case "Dirt":
+                                actorBuilder.createDirtTile(tile, (i + tileSize) * tileRatio, (j + tileSize) * tileRatio, tileSize, tileSize);
                                 break;
                             case "Block":
+                                actorBuilder.createBlockTile(tile, (i + tileSize) * tileRatio, (j + tileSize) * tileRatio, tileSize, tileSize);
+                                break;
+                            case "Spike":
+                                actorBuilder.createSpikeTile(tile, (i + tileSize) * tileRatio, (j + tileSize) * tileRatio, tileSize, tileSize);
                                 break;
                             default:
                                 break;

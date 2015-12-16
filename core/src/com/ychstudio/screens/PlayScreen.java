@@ -22,8 +22,8 @@ import com.ychstudio.loaders.MapLoader;
 
 public class PlayScreen implements Screen {
 
-    private final float WIDTH = 16f;
-    private final float HEIGHT = 9f;
+    private final float WIDTH = 32f;
+    private final float HEIGHT = 16f;
     
     private FitViewport viewport;
     private OrthographicCamera camera;

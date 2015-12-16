@@ -24,6 +24,8 @@ public class Bullet extends RigidBodyActor implements Damagable {
         EXPLODE
     }
     
+    public static final int POWER = 1;
+    
     private static final float RADIUS = 0.1f;
     private static final float SPEED = 12f;
     
@@ -136,6 +138,10 @@ public class Bullet extends RigidBodyActor implements Damagable {
         
         sprite.setPosition(x - width / 2f, y - height / 2f);
         
+    }
+    
+    public void hitObject() {
+        hp = 0;
     }
     
     public boolean isAlive() {

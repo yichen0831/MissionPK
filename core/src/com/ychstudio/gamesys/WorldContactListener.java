@@ -27,21 +27,21 @@ public class WorldContactListener implements ContactListener {
             if (categoryA == GM.BULLET_BIT) {
                 Bullet bullet = (Bullet) bodyA.getUserData();
                 if (bullet.isAlive()) {
-                    bullet.getDamaged(1);
+                    bullet.hitObject();
 
                     RigidBodyActor other = (RigidBodyActor) bodyB.getUserData();
                     if (other instanceof Damagable) {
-                        ((Damagable) other).getDamaged(1);
+                        ((Damagable) other).getDamaged(Bullet.POWER);
                     }
                 }
             } else {
                 Bullet bullet = (Bullet) bodyB.getUserData();
                 if (bullet.isAlive()) {
-                    bullet.getDamaged(1);
+                    bullet.hitObject();
 
                     RigidBodyActor other = (RigidBodyActor) bodyA.getUserData();
                     if (other instanceof Damagable) {
-                        ((Damagable) other).getDamaged(1);
+                        ((Damagable) other).getDamaged(Bullet.POWER);
                     }
                 }
             }
