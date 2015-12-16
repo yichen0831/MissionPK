@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -104,17 +105,25 @@ public class PlayScreen implements Screen {
         Player player = GM.getPlayer();
         // follow player
         if (player != null) {
-            Vector2 playerPos = player.getPosition();
-            float targetX = camera.position.x;
-            float targetY = camera.position.y;
+            float targetX = player.getPosition().x;
+            float targetY = player.getPosition().y;
             
-            if (playerPos.x > WIDTH / 2f && playerPos.x < (mapWidth - WIDTH / 2f)) {
-                targetX = playerPos.x;
+            if (targetX < WIDTH / 2f) {
+            	targetX = WIDTH / 2f;
+            } 
+            else if (targetX > (mapWidth - WIDTH / 2f)) {
+            	targetX = mapWidth - WIDTH / 2f;
             }
-           
-            if (playerPos.y > HEIGHT / 2f && playerPos.y < (mapHeight - HEIGHT / 2f)) {
-                targetY = playerPos.y;
+            
+            if (targetY < HEIGHT / 2f) {
+            	targetY = HEIGHT / 2f;
             }
+            else if (targetY > (mapHeight - HEIGHT /2f)) {
+            	targetY = mapHeight - HEIGHT / 2f;
+            }
+            
+            targetX = MathUtils.lerp(camera.position.x, targetX, 0.1f);
+            targetY = MathUtils.lerp(camera.position.y, targetY, 0.1f);
             camera.position.set(targetX, targetY, 0);
         }
         camera.update();
