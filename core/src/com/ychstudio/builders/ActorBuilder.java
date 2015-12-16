@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.actors.Bullet;
+import com.ychstudio.actors.Grenade;
 import com.ychstudio.actors.Player;
 import com.ychstudio.actors.tiles.BlockTile;
 import com.ychstudio.actors.tiles.DirtTile;
@@ -69,6 +70,13 @@ public class ActorBuilder {
         Bullet bullet = new Bullet(world, textureAtlas.findRegion("Bullet"), x, y, 32 / GM.PPM, 32 / GM.PPM);
         bullet.setDirection(dir);
         actorList.add(bullet);
+    }
+    
+    public void createGrenade(float x, float y, float dir) {
+        TextureAtlas textureAtlas = assetManager.get("img/actors.pack", TextureAtlas.class);
+        Grenade grenade= new Grenade(world, textureAtlas.findRegion("Bullet"), x, y, 32 / GM.PPM, 32 / GM.PPM);
+        grenade.setDirection(dir);
+        actorList.add(grenade);
     }
 
 }

@@ -29,6 +29,8 @@ public class Bullet extends RigidBodyActor implements Damagable {
     private static final float RADIUS = 0.1f;
     private static final float SPEED = 12f;
     
+    private static final Vector2 tmpV = new Vector2();
+
     private int hp = 1;
     
     private Map<String, Animation> animMap;
@@ -38,8 +40,6 @@ public class Bullet extends RigidBodyActor implements Damagable {
     private boolean explode = false;
     
     private State state = State.FLY;
-    
-    private final Vector2 tmpV = new Vector2();
     
     public Bullet(World world, TextureRegion textureRegion, float x, float y, float width, float height) {
         super(world, textureRegion, x, y, width, height);

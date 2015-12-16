@@ -192,6 +192,12 @@ public class Player extends RigidBodyActor implements Damagable {
             		reload =true;
             	}
             }
+            
+            // throw a grenade
+            if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            	ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+            	actorBuilder.createGrenade(x + (faceRight ? 0.3f : -0.3f), y + 0.3f, faceRight ? 1 : -1);
+            }
 
             // jump
             if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
@@ -308,7 +314,7 @@ public class Player extends RigidBodyActor implements Damagable {
                 return 1;
             }
             short categoryBits = fixture.getFilterData().categoryBits;
-            if (categoryBits == GM.OBSTACLE_BIT || categoryBits == GM.PLAYER_BIT) {
+            if (categoryBits == GM.OBSTACLE_BIT || categoryBits == GM.PLAYER_BIT || categoryBits == GM.GRENADE_BIT) {
                 grounded = true;
             }
             return 0;

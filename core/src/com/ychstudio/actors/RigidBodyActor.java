@@ -13,6 +13,7 @@ public abstract class RigidBodyActor extends AbstractActor {
         super(textureRegion, x, y, width, height);
         this.world = world;
         sprite.setPosition(x - width / 2f, y - height / 2f);
+        sprite.setOriginCenter();
     }
 
 }
