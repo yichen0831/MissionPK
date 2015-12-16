@@ -17,3 +17,24 @@ Bullet
   orig: 256, 32
   offset: 0, 0
   index: -1
+Debris
+  rotate: false
+  xy: 645, 1
+  size: 128, 32
+  orig: 128, 32
+  offset: 0, 0
+  index: -1
+Bar
+  rotate: false
+  xy: 775, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+Grenade
+  rotate: false
+  xy: 809, 1
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

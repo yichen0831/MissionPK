@@ -16,7 +16,7 @@ public class SpikeTile extends TileActor {
         super(world, textureRegion, x, y, width, height);
         
         BodyDef bodyDef = new BodyDef();
-        bodyDef.type = BodyType.StaticBody;
+        bodyDef.type = BodyType.KinematicBody;
         bodyDef.position.set(x, y);
         
         body = world.createBody(bodyDef);

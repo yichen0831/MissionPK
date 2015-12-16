@@ -153,7 +153,10 @@ public class Player extends RigidBodyActor implements Damagable {
         	reloadTimeLeft -= delta;
         }
         else {
-        	reloadTimeLeft = reloadTime;
+            if (ammo <= 0) {
+                reload = true;
+            }
+            reloadTimeLeft = reloadTime;
         }
         
         // reload is done
@@ -180,9 +183,6 @@ public class Player extends RigidBodyActor implements Damagable {
             			tmpV1.set(-1, 0);
             			actorBuilder.createBullet(x - 0.5f, y - 0.2f, tmpV1);
             		}
-            	}
-            	else {
-            		reload = true;
             	}
             }
             
@@ -314,6 +314,9 @@ public class Player extends RigidBodyActor implements Damagable {
                 return 1;
             }
             short categoryBits = fixture.getFilterData().categoryBits;
+            if (categoryBits == GM.DEBRIS_BIT) {
+                return 1;
+            }
             if (categoryBits == GM.OBSTACLE_BIT || categoryBits == GM.PLAYER_BIT || categoryBits == GM.GRENADE_BIT) {
                 grounded = true;
             }

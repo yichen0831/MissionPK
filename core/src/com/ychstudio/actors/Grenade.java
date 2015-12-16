@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 
 public class Grenade extends RigidBodyActor implements Damagable {
@@ -85,6 +86,7 @@ public class Grenade extends RigidBodyActor implements Damagable {
         	
         	FixtureDef fixtureDef = new FixtureDef();
         	fixtureDef.shape = shape;
+        	fixtureDef.isSensor = true;
         	fixtureDef.filter.categoryBits = GM.EXPLOSION_BIT;
         	fixtureDef.filter.maskBits = GM.EXPLOSION_MASK_BITS;
         	
@@ -92,6 +94,10 @@ public class Grenade extends RigidBodyActor implements Damagable {
         	shape.dispose();
         	
         	// TODO make particle effect
+        	ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+        	for (int i = 0; i < 12; i++) {
+        	    actorBuilder.createDebris(x, y, tmpV.set(MathUtils.random(-8f, 8f), MathUtils.random(-8f, 8f)));
+        	}
         }
 	}
 

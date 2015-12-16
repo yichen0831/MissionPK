@@ -2,12 +2,15 @@ package com.ychstudio.builders;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.actors.Bullet;
+import com.ychstudio.actors.Debris;
 import com.ychstudio.actors.Grenade;
 import com.ychstudio.actors.Player;
 import com.ychstudio.actors.tiles.BlockTile;
@@ -74,9 +77,16 @@ public class ActorBuilder {
     
     public void createGrenade(float x, float y, float dir) {
         TextureAtlas textureAtlas = assetManager.get("img/actors.pack", TextureAtlas.class);
-        Grenade grenade= new Grenade(world, textureAtlas.findRegion("Bullet"), x, y, 32 / GM.PPM, 32 / GM.PPM);
+        Grenade grenade= new Grenade(world, textureAtlas.findRegion("Grenade"), x, y, 32 / GM.PPM, 32 / GM.PPM);
         grenade.setDirection(dir);
         actorList.add(grenade);
+    }
+    
+    public void createDebris(float x, float y, Vector2 velocity) {
+        TextureAtlas textureAtlas = assetManager.get("img/actors.pack", TextureAtlas.class);
+        Debris debris = new Debris(world, new TextureRegion(textureAtlas.findRegion("Debris"), 32 * MathUtils.random(3), 0, 32, 32), x, y, 32 / GM.PPM, 32 / GM.PPM);
+        debris.setLinearVelocity(velocity);
+        actorList.add(debris);
     }
 
 }

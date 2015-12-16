@@ -54,7 +54,7 @@ public class InfoGUI implements Disposable {
         
         VisTable table = new VisTable();
         table.setFillParent(true);
-        table.top().left().padLeft(6f);
+        table.top().right().padRight(6f);
         table.add(fpsLabel);
         
         stage.addActor(table);
@@ -64,7 +64,7 @@ public class InfoGUI implements Disposable {
         bulletSprite = new Sprite(new TextureRegion(textureAtlas.findRegion("Bullet"), 0, 0, 32, 32));
         bulletSprite.setBounds(0, 0, 32f, 32f);
         
-        reloadSprite = new Sprite(new TextureRegion(textureAtlas.findRegion("Bullet"), 0, 0, 32, 32));
+        reloadSprite = new Sprite(new TextureRegion(textureAtlas.findRegion("Bar"), 0, 0, 32, 32));
     }
     
     public void update() {
@@ -103,7 +103,7 @@ public class InfoGUI implements Disposable {
     	
     	// draw reload indication
     	if (playerReloadTime != 0) {
-    		reloadSprite.setBounds(10f, screenHeight - 70f, 200f * (1 - playerReloadTimeLeft / playerReloadTime), 16f);
+    		reloadSprite.setBounds(16f, screenHeight - 70f, 128f * (1 - playerReloadTimeLeft / playerReloadTime), 16f);
     		reloadSprite.draw(batch);
     	}
     	

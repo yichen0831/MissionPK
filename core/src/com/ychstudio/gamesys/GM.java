@@ -21,14 +21,16 @@ public class GM {
     public static final short GRENADE_BIT = 1 << 3;
     public static final short TRAP_BIT = 1 << 4;
     public static final short EXPLOSION_BIT = 1 << 5;
+    public static final short DEBRIS_BIT = 1 << 6;
     
     // mask bits
     public static final short PLAYER_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT | GRENADE_BIT | TRAP_BIT | EXPLOSION_BIT;
-    public static final short OBSTACLE_MASK_BITS = PLAYER_BIT | BULLET_BIT | GRENADE_BIT | EXPLOSION_BIT;
+    public static final short OBSTACLE_MASK_BITS = PLAYER_BIT | BULLET_BIT | GRENADE_BIT | EXPLOSION_BIT | DEBRIS_BIT;
     public static final short BULLET_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT | GRENADE_BIT | TRAP_BIT | EXPLOSION_BIT;
     public static final short GRENADE_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT | GRENADE_BIT | TRAP_BIT | EXPLOSION_BIT;
     public static final short TRAP_MASK_BITS = PLAYER_BIT | BULLET_BIT | GRENADE_BIT | EXPLOSION_BIT;
-    public static final short EXPLOSION_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT | GRENADE_BIT | TRAP_BIT |EXPLOSION_BIT;
+    public static final short EXPLOSION_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT | GRENADE_BIT | TRAP_BIT | DEBRIS_BIT;
+    public static final short DEBRIS_MASK_BITS = OBSTACLE_BIT | EXPLOSION_BIT;
     
     public static final float PPM = 32;
     
