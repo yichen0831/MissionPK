@@ -26,7 +26,7 @@ public class Player extends RigidBodyActor implements Damagable {
         IDLE, WALK, FIRE, JUMP, DIE
     }
 
-    private static final float RADIUS = 0.45f;
+    private static final float RADIUS = 0.3f;
 
     private float moveForceGround = 1f;
     private float moveForceAir = 0.5f;
@@ -68,7 +68,7 @@ public class Player extends RigidBodyActor implements Damagable {
         body.setUserData(this);
 
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(RADIUS / 1.5f);
+        circleShape.setRadius(RADIUS);
         circleShape.setPosition(tmpV1.set(0, 0.1f));
 
         FixtureDef fixtureDef = new FixtureDef();
@@ -84,7 +84,7 @@ public class Player extends RigidBodyActor implements Damagable {
         circleShape.dispose();
         
         EdgeShape edgeShape = new EdgeShape();
-        edgeShape.set(-(RADIUS / 1.6f), -(RADIUS + 0.05f), (RADIUS / 1.6f), -(RADIUS + 0.05f));
+        edgeShape.set(-(RADIUS - 0.1f), -(RADIUS + 0.18f), (RADIUS - 0.1f), -(RADIUS + 0.18f));
         
         fixtureDef.shape = edgeShape;
         body.createFixture(fixtureDef);
@@ -139,10 +139,10 @@ public class Player extends RigidBodyActor implements Damagable {
                 ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
                 if (faceRight) {
                     tmpV1.set(1, 0);
-                    actorBuilder.createBullet(x + 0.7f, y - 0.2f, tmpV1);
+                    actorBuilder.createBullet(x + 0.5f, y - 0.2f, tmpV1);
                 } else {
                     tmpV1.set(-1, 0);
-                    actorBuilder.createBullet(x - 0.7f, y - 0.2f, tmpV1);
+                    actorBuilder.createBullet(x - 0.5f, y - 0.2f, tmpV1);
                 }
             }
 
@@ -239,9 +239,9 @@ public class Player extends RigidBodyActor implements Damagable {
         }
 
         sprite.setRegion(animation.getKeyFrame(stateTime));
-        if (body.getLinearVelocity().x < 0) {
+        if (body.getLinearVelocity().x < -1f) {
             faceRight = false;
-        } else if (body.getLinearVelocity().x > 0) {
+        } else if (body.getLinearVelocity().x > 1f) {
             faceRight = true;
         }
 
@@ -252,24 +252,24 @@ public class Player extends RigidBodyActor implements Damagable {
 
         sprite.setPosition(x - width / 2f, y - height / 2f);
     }
+    
+    private RayCastCallback rayCastCallback = new RayCastCallback() {
+
+        @Override
+        public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
+            if (fixture.getBody().equals(body)) {
+                return 1;
+            }
+            short categoryBits = fixture.getFilterData().categoryBits;
+            if (categoryBits == GM.OBSTACLE_BIT || categoryBits == GM.PLAYER_BIT) {
+                grounded = true;
+            }
+            return 0;
+        }
+    };
 
     private boolean checkGrounded() {
         grounded = false;
-
-        RayCastCallback rayCastCallback = new RayCastCallback() {
-
-            @Override
-            public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
-                if (fixture.getBody().equals(body)) {
-                    return 1;
-                }
-                short categoryBits = fixture.getFilterData().categoryBits;
-                if (categoryBits == GM.OBSTACLE_BIT || categoryBits == GM.PLAYER_BIT) {
-                    grounded = true;
-                }
-                return 0;
-            }
-        };
 
         for (int i = -1; i < 1; i++) {
             tmpV1.set(body.getPosition().x + i * (RADIUS - 0.1f), body.getPosition().y);
