@@ -30,12 +30,17 @@ public class InfoGUI implements Disposable {
     private BitmapFont font;
     
     private VisLabel fpsLabel;
+    private VisLabel hpLabel;
     
     private Sprite bulletSprite;
+    private Sprite grenadeSprite;
     private Sprite reloadSprite;
     
+    private int playerHP;
     private int playerAmmo;
     private int playerMaxAmmo;
+    private int playerGrenade;
+    private int playerMaxGrenade;
     private float playerReloadTime;
     private float playerReloadTimeLeft;
     
@@ -50,13 +55,15 @@ public class InfoGUI implements Disposable {
         font = new BitmapFont(Gdx.files.internal("fonts/Monofonto_32.fnt"));
         LabelStyle labelStyle = new LabelStyle(font, Color.WHITE);
         
-        fpsLabel = new VisLabel("FPS:", labelStyle);
+        fpsLabel = new VisLabel("FPS:");
+        hpLabel = new VisLabel("HP:", labelStyle);
+        hpLabel.setPosition(16f, screenHeight - 40f);;
         
         VisTable table = new VisTable();
         table.setFillParent(true);
-        table.top().right().padRight(6f);
+        table.bottom().left().padLeft(16f);
         table.add(fpsLabel);
-        
+        stage.addActor(hpLabel);
         stage.addActor(table);
         
         
@@ -64,11 +71,15 @@ public class InfoGUI implements Disposable {
         bulletSprite = new Sprite(new TextureRegion(textureAtlas.findRegion("Bullet"), 0, 0, 32, 32));
         bulletSprite.setBounds(0, 0, 32f, 32f);
         
+        grenadeSprite = new Sprite(new TextureRegion(textureAtlas.findRegion("Grenade"), 0, 0, 32, 32));
+        grenadeSprite.setBounds(0, 0, 32f, 32f);
+        
         reloadSprite = new Sprite(new TextureRegion(textureAtlas.findRegion("Bar"), 0, 0, 32, 32));
     }
     
     public void update() {
-    	fpsLabel.setText("FPS:" + Gdx.graphics.getFramesPerSecond());
+    	fpsLabel.setText("FPS: " + Gdx.graphics.getFramesPerSecond());
+    	hpLabel.setText("HP: " + playerHP);
     	
     	if (GM.getPlayer() != null) {
     		Player player = GM.getPlayer();
@@ -76,12 +87,18 @@ public class InfoGUI implements Disposable {
     		playerMaxAmmo = player.getMaxAmmo();
     		playerReloadTime = player.getReloadTime();
     		playerReloadTimeLeft = player.getReloadTimeLeft();
+    		playerGrenade = player.getGrenade();
+    		playerMaxGrenade = player.getMaxGrenade();
+    		playerHP = player.getHP();
     	}
     	else {
     		playerAmmo = 0;
     		playerMaxAmmo = 0;
     		playerReloadTime = 0;
     		playerReloadTimeLeft = 0;
+    		playerGrenade = 0;
+    		playerMaxGrenade = 0;
+    		playerHP = 0;
     	}
     }
     
@@ -103,8 +120,20 @@ public class InfoGUI implements Disposable {
     	
     	// draw reload indication
     	if (playerReloadTime != 0) {
-    		reloadSprite.setBounds(16f, screenHeight - 70f, 128f * (1 - playerReloadTimeLeft / playerReloadTime), 16f);
+    		reloadSprite.setBounds(18f, screenHeight - 48f, 128f * (1 - playerReloadTimeLeft / playerReloadTime), 8f);
     		reloadSprite.draw(batch);
+    	}
+    	
+    	// draw grenade indication
+    	for (int i = 0; i < playerMaxGrenade; i++) {
+    	    grenadeSprite.setPosition(10f + 16f * i, screenHeight - 80f);
+    	    if (i >= playerGrenade) {
+    	        grenadeSprite.setAlpha(0.3f);
+    	    }
+    	    else {
+    	        grenadeSprite.setAlpha(1f);
+    	    }
+    	    grenadeSprite.draw(batch);
     	}
     	
     	batch.end();
@@ -117,6 +146,7 @@ public class InfoGUI implements Disposable {
         font.dispose();
         stage.dispose();
         batch.dispose();
+        VisUI.dispose();
     }
 
 }

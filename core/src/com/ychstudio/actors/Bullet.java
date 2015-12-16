@@ -17,7 +17,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.ychstudio.gamesys.GM;
 
-public class Bullet extends RigidBodyActor implements Damagable {
+public class Bullet extends RigidBodyActor implements Damagable, Explodable {
 
     public enum State {
         FLY,
@@ -156,6 +156,16 @@ public class Bullet extends RigidBodyActor implements Damagable {
     @Override
     public void getDamaged(int damage) {
         hp -= damage;
+    }
+
+    @Override
+    public int getExplosionPower() {
+        return POWER;
+    }
+
+    @Override
+    public float getExplosionRadius() {
+        return RADIUS;
     }
 
 

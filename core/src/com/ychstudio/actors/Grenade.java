@@ -11,8 +11,11 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 
-public class Grenade extends RigidBodyActor implements Damagable {
+public class Grenade extends RigidBodyActor implements Damagable, Explodable {
 
+    public static final int POWER = 10;
+    public static final float EXPLOSION_RADIUS = 0.8f;
+    
 	private static final float radius = 0.2f;
 	private static final Vector2 tmpV = new Vector2();
 
@@ -82,7 +85,7 @@ public class Grenade extends RigidBodyActor implements Damagable {
         	explode = true;
         	
         	CircleShape shape = new CircleShape();
-        	shape.setRadius(radius * 3f);
+        	shape.setRadius(EXPLOSION_RADIUS);
         	
         	FixtureDef fixtureDef = new FixtureDef();
         	fixtureDef.shape = shape;
@@ -93,17 +96,28 @@ public class Grenade extends RigidBodyActor implements Damagable {
         	body.createFixture(fixtureDef);
         	shape.dispose();
         	
-        	// TODO make particle effect
+        	// make particle effect
         	ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
         	for (int i = 0; i < 12; i++) {
-        	    actorBuilder.createDebris(x, y, tmpV.set(MathUtils.random(-8f, 8f), MathUtils.random(-8f, 8f)));
+        	    actorBuilder.createDebris(x, y, tmpV.set(MathUtils.random(-8f, 8f), MathUtils.random(-1f, 12f)));
         	}
         }
 	}
 
 	@Override
+	public int getExplosionPower() {
+	    return POWER;
+	}
+	
+	@Override
 	public void dispose() {
 		world.destroyBody(body);
 	}
+
+    @Override
+    public float getExplosionRadius() {
+        return EXPLOSION_RADIUS;
+    }
+
 
 }

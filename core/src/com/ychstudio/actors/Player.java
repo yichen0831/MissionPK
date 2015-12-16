@@ -33,10 +33,16 @@ public class Player extends RigidBodyActor implements Damagable {
     private float speed = 4f;
     private float jumpForce = 8f;
 
-    private int hp = 30;
+    private int hp = 100;
     
     private int maxAmmo = 8;
     private int ammo = 8;
+    
+    private int maxGrenade = 5;
+    private int grenade = 5;
+    
+    private float grenadeGenTime = 5f;
+    private float grenadeGenTimeLeft = 5f;
     
     private float reloadTime = 3f;
     private float reloadTimeLeft = 0;
@@ -69,6 +75,7 @@ public class Player extends RigidBodyActor implements Damagable {
 
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DynamicBody;
+        bodyDef.fixedRotation = true;
         bodyDef.position.set(x, y);
         body = world.createBody(bodyDef);
         body.setUserData(this);
@@ -79,6 +86,7 @@ public class Player extends RigidBodyActor implements Damagable {
 
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circleShape;
+        fixtureDef.density = 0.5f;
         fixtureDef.filter.categoryBits = GM.PLAYER_BIT;
         fixtureDef.filter.maskBits = GM.PLAYER_MASK_BITS;
 
@@ -95,7 +103,6 @@ public class Player extends RigidBodyActor implements Damagable {
         
         fixtureDef.shape = edgeShape;
         fixtureDef.friction = 0.5f;
-        fixtureDef.density = 0.5f;
         body.createFixture(fixtureDef);
         
         edgeShape.dispose();
@@ -164,7 +171,15 @@ public class Player extends RigidBodyActor implements Damagable {
         	ammo = maxAmmo;
         	reload = false;
         }
-
+        
+        // generate grenade
+        if (grenade < maxGrenade) {
+            grenadeGenTimeLeft -= delta;
+            if (grenadeGenTimeLeft <= 0) {
+                grenade++;
+                grenadeGenTimeLeft = grenadeGenTime;
+            }
+        }
         
         if (!dead) {
             checkGrounded();
@@ -195,14 +210,17 @@ public class Player extends RigidBodyActor implements Damagable {
             
             // throw a grenade
             if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
-            	ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
-            	actorBuilder.createGrenade(x + (faceRight ? 0.3f : -0.3f), y + 0.3f, faceRight ? 1 : -1);
+                if (grenade > 0) {
+                    grenade--;
+                    ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+                    actorBuilder.createGrenade(x + (faceRight ? 0.3f : -0.3f), y + 0.3f, faceRight ? 1 : -1);
+                }
             }
 
             // jump
             if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
                 if (grounded) {
-                    body.applyLinearImpulse(tmpV1.set(0, jumpForce), body.getWorldCenter(), true);
+                    body.applyLinearImpulse(tmpV1.set(0, jumpForce * body.getMass()), body.getWorldCenter(), true);
                 }
             }
             
@@ -214,10 +232,10 @@ public class Player extends RigidBodyActor implements Damagable {
             // move left
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
                 if (grounded) {
-                    body.applyLinearImpulse(tmpV1.set(-moveForceGround, 0), body.getWorldCenter(), true);
+                    body.applyLinearImpulse(tmpV1.set(-moveForceGround * body.getMass(), 0), body.getWorldCenter(), true);
                 }
                 else {
-                    body.applyLinearImpulse(tmpV1.set(-moveForceAir, 0), body.getWorldCenter(), true);
+                    body.applyLinearImpulse(tmpV1.set(-moveForceAir * body.getMass(), 0), body.getWorldCenter(), true);
                 }
                 if (body.getLinearVelocity().x < -speed) {
                     body.setLinearVelocity(-speed, body.getLinearVelocity().y);
@@ -227,10 +245,10 @@ public class Player extends RigidBodyActor implements Damagable {
             // move right
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
                 if (grounded) {
-                    body.applyLinearImpulse(tmpV1.set(moveForceGround, 0), body.getWorldCenter(), true);
+                    body.applyLinearImpulse(tmpV1.set(moveForceGround * body.getMass(), 0), body.getWorldCenter(), true);
                 }
                 else {
-                    body.applyLinearImpulse(tmpV1.set(moveForceAir, 0), body.getWorldCenter(), true);
+                    body.applyLinearImpulse(tmpV1.set(moveForceAir * body.getMass(), 0), body.getWorldCenter(), true);
                 }
                 if (body.getLinearVelocity().x > speed) {
                     body.setLinearVelocity(speed, body.getLinearVelocity().y);
@@ -348,14 +366,26 @@ public class Player extends RigidBodyActor implements Damagable {
 		return ammo;
 	}
 
-	public float getReloadTime() {
+    public float getReloadTime() {
 		return reloadTime;
 	}
 
 	public float getReloadTimeLeft() {
 		return reloadTimeLeft;
 	}
-
+	
+	public int getMaxGrenade() {
+	    return maxGrenade;
+	}
+	
+	public int getGrenade() {
+	    return grenade;
+	}
+	
+	public int getHP() {
+	    return hp;
+	}
+	
 	@Override
     public void getDamaged(int damage) {
         hp -= damage;
