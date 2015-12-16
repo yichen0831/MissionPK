@@ -68,7 +68,7 @@ public class Player extends RigidBodyActor implements Damagable {
         body.setUserData(this);
 
         CircleShape circleShape = new CircleShape();
-        circleShape.setRadius(RADIUS);
+        circleShape.setRadius((RADIUS / 1.2f));
         circleShape.setPosition(tmpV1.set(0, 0.1f));
 
         FixtureDef fixtureDef = new FixtureDef();
@@ -78,6 +78,7 @@ public class Player extends RigidBodyActor implements Damagable {
 
         body.createFixture(fixtureDef);
         
+        circleShape.setRadius(RADIUS);
         circleShape.setPosition(tmpV1.set(0, -0.16f));
         body.createFixture(fixtureDef);
         
@@ -289,6 +290,10 @@ public class Player extends RigidBodyActor implements Damagable {
         }
 
         return grounded;
+    }
+    
+    public Vector2 getPosition() {
+        return body.getPosition();
     }
 
     @Override

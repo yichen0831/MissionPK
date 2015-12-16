@@ -1,7 +1,5 @@
 package com.ychstudio.screens;
 
-import java.util.Iterator;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -14,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.ychstudio.actors.AbstractActor;
+import com.ychstudio.actors.Player;
 import com.ychstudio.actors.tiles.TileActor;
 import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
@@ -25,6 +24,9 @@ public class PlayScreen implements Screen {
 
     private final float WIDTH = 16f;
     private final float HEIGHT = 9f;
+    
+    private float mapWidth;
+    private float mapHeight;
     
     private FitViewport viewport;
     private OrthographicCamera camera;
@@ -60,6 +62,8 @@ public class PlayScreen implements Screen {
         actorBuilder.createPlayer(6f, 6f);
         
         MapLoader.loadTiledMap("level_01.tmx", world);
+        mapWidth = MapLoader.mapWidth;
+        mapHeight = MapLoader.mapHeight;
         
         box2DDebugRenderer = new Box2DDebugRenderer();
         
@@ -72,26 +76,48 @@ public class PlayScreen implements Screen {
             showBox2DDebugRenderer = !showBox2DDebugRenderer;
         }
         
-        for(Iterator<TileActor> iter = tileList.iterator(); iter.hasNext();) {
-            AbstractActor actor = iter.next();
+        for (int i = 0; i < tileList.size; i++) {
+            AbstractActor actor = tileList.get(i);
             if (actor.isToBeRemoved()) {
                 actor.dispose();
-                iter.remove();
-            } else {
-              actor.update(delta);  
+                tileList.removeIndex(i);
+            }
+            else {
+                actor.update(delta);
+            }
+        }
+
+        for (int i = 0; i < actorList.size; i++) {
+            AbstractActor actor = actorList.get(i);
+            if (actor.isToBeRemoved()) {
+                actor.dispose();
+                actorList.removeIndex(i);
+            }
+            else {
+                actor.update(delta);
             }
         }
         
-        for(Iterator<AbstractActor> iter = actorList.iterator(); iter.hasNext();) {
-            AbstractActor actor = iter.next();
-            if (actor.isToBeRemoved()) {
-                actor.dispose();
-                iter.remove();
-            } else {
-              actor.update(delta);  
+    }
+    
+    public void handleCamera(float delta) {
+        Player player = GM.getPlayer();
+        // follow player
+        if (player != null) {
+            Vector2 playerPos = player.getPosition();
+            float targetX = camera.position.x;
+            float targetY = camera.position.y;
+            
+            if (playerPos.x > WIDTH / 2f && playerPos.x < (mapWidth - WIDTH / 2f)) {
+                targetX = playerPos.x;
             }
+           
+            if (playerPos.y > HEIGHT / 2f && playerPos.y < (mapHeight - HEIGHT / 2f)) {
+                targetY = playerPos.y;
+            }
+            camera.position.set(targetX, targetY, 0);
         }
-        
+        camera.update();
     }
 
     @Override
@@ -103,18 +129,21 @@ public class PlayScreen implements Screen {
         
         update(delta);
         
+        handleCamera(delta);
+        
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         
         // draw tiles
-        for (TileActor actor : tileList) {
-            actor.draw(batch);
+        for (int i = 0; i < tileList.size; i++) {
+            tileList.get(i).draw(batch);
         }
         
         // draw actors
-        for (AbstractActor actor : actorList) {
-            actor.draw(batch);
+        for (int i = 0; i < actorList.size; i++) {
+            actorList.get(i).draw(batch);
         }
+        
         batch.end();       
         
         if (showBox2DDebugRenderer) {

@@ -59,7 +59,9 @@ public class ActorBuilder {
     
     public void createPlayer(float x, float y) {
         TextureAtlas textureAtlas = assetManager.get("img/actors.pack", TextureAtlas.class);
-        actorList.add(new Player(world, textureAtlas.findRegion("Gunner"), x, y, 32 / GM.PPM, 32 / GM.PPM));
+        Player player = new Player(world, textureAtlas.findRegion("Gunner"), x, y, 32 / GM.PPM, 32 / GM.PPM);
+        GM.setPlayer(player);
+        actorList.add(player);
     }
     
     public void createBullet(float x, float y, Vector2 dir) {

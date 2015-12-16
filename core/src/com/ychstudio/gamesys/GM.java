@@ -7,6 +7,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.utils.Array;
 import com.ychstudio.actors.AbstractActor;
+import com.ychstudio.actors.Player;
 import com.ychstudio.actors.tiles.TileActor;
 
 public class GM {
@@ -26,6 +27,8 @@ public class GM {
     public static final short TRAP_MASK_BITS = PLAYER_BIT | BULLET_BIT;
     
     public static final float PPM = 32;
+    
+    private Player player = null;
 
     private AssetManager assetManager;
     
@@ -60,6 +63,14 @@ public class GM {
     
     public static Array<TileActor> getTileList() {
         return instance.tileList;
+    }
+    
+    public static void setPlayer(Player player) {
+        instance.player = player;
+    }
+    
+    public static Player getPlayer() {
+        return instance.player;
     }
     
     public void dispose() {

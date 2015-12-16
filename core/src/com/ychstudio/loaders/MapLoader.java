@@ -18,6 +18,8 @@ import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 
 public class MapLoader {
+    public static float mapWidth = 0;
+    public static float mapHeight = 0;
     
     private MapLoader(){};
     
@@ -30,6 +32,11 @@ public class MapLoader {
         if (tileLayer != null) {
             float tileSize = tileLayer.getTileWidth() / GM.PPM;
             float tileRatio = tileLayer.getTileWidth() / GM.PPM;
+            
+            // update map width and height
+            mapWidth = tileLayer.getWidth() * tileRatio;
+            mapHeight = tileLayer.getHeight() * tileRatio;
+            
             
             for (int j = 0; j < tileLayer.getHeight(); j++) {
                 for (int i = 0; i < tileLayer.getWidth(); i++) {
