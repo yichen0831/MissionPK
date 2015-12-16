@@ -77,8 +77,8 @@ public class PlayScreen implements Screen {
             showBox2DDebugRenderer = !showBox2DDebugRenderer;
         }
         
-        for (int i = 0; i < tileList.size; i++) {
-            AbstractActor actor = tileList.get(i);
+        for (int i = tileList.size - 1; i >= 0; i--) {
+            TileActor actor = tileList.get(i);
             if (actor.isToBeRemoved()) {
                 actor.dispose();
                 tileList.removeIndex(i);
@@ -88,7 +88,7 @@ public class PlayScreen implements Screen {
             }
         }
 
-        for (int i = 0; i < actorList.size; i++) {
+        for (int i = actorList.size -1; i >= 0; i--) {
             AbstractActor actor = actorList.get(i);
             if (actor.isToBeRemoved()) {
                 actor.dispose();

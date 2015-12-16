@@ -31,9 +31,15 @@ public class Player extends RigidBodyActor implements Damagable {
     private float moveForceGround = 0.8f;
     private float moveForceAir = 0.5f;
     private float speed = 4f;
-    private float jumpForce = 7.2f;
+    private float jumpForce = 8f;
 
     private int hp = 30;
+    
+    private int maxAmmo = 8;
+    private int ammo = 8;
+    
+    private float reloadTime = 3f;
+    private float reloadTimeLeft = 0;
 
     private static final float BULLET_CD = 0.2f;
     private float bullet_cd = 0;
@@ -47,7 +53,7 @@ public class Player extends RigidBodyActor implements Damagable {
     
     // action
     private boolean fire = false;
-
+    private boolean reload = false;
     
     // flag
     private boolean faceRight = true;
@@ -136,30 +142,59 @@ public class Player extends RigidBodyActor implements Damagable {
         stateTime += delta;
         bullet_cd -= delta;
 
+        // dead
         if (hp <= 0 && !dead) {
             stateTime = 0;
             dead = true;
         }
+        
+        // reload
+        if (reload) {
+        	reloadTimeLeft -= delta;
+        }
+        else {
+        	reloadTimeLeft = reloadTime;
+        }
+        
+        // reload is done
+        if (reloadTimeLeft <= 0) {
+        	ammo = maxAmmo;
+        	reload = false;
+        }
 
+        
         if (!dead) {
             checkGrounded();
 
             // fire
-            if (Gdx.input.isKeyPressed(Input.Keys.X) && bullet_cd <= 0) {
-                bullet_cd = BULLET_CD;
-                fire = true;
-                ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
-                if (faceRight) {
-                    tmpV1.set(1, 0);
-                    actorBuilder.createBullet(x + 0.5f, y - 0.2f, tmpV1);
-                } else {
-                    tmpV1.set(-1, 0);
-                    actorBuilder.createBullet(x - 0.5f, y - 0.2f, tmpV1);
-                }
+            if (Gdx.input.isKeyPressed(Input.Keys.Z) && bullet_cd <= 0) {
+            	if (ammo > 0 && !reload) {
+            		bullet_cd = BULLET_CD;
+            		fire = true;
+            		ammo -= 1;
+            		ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+            		if (faceRight) {
+            			tmpV1.set(1, 0);
+            			actorBuilder.createBullet(x + 0.5f, y - 0.2f, tmpV1);
+            		} else {
+            			tmpV1.set(-1, 0);
+            			actorBuilder.createBullet(x - 0.5f, y - 0.2f, tmpV1);
+            		}
+            	}
+            	else {
+            		reload = true;
+            	}
+            }
+            
+            // reload 
+            if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            	if (ammo < maxAmmo) {
+            		reload =true;
+            	}
             }
 
             // jump
-            if (Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
                 if (grounded) {
                     body.applyLinearImpulse(tmpV1.set(0, jumpForce), body.getWorldCenter(), true);
                 }
@@ -295,8 +330,24 @@ public class Player extends RigidBodyActor implements Damagable {
     public Vector2 getPosition() {
         return body.getPosition();
     }
+    
+    public int getMaxAmmo() {
+		return maxAmmo;
+	}
 
-    @Override
+	public int getAmmo() {
+		return ammo;
+	}
+
+	public float getReloadTime() {
+		return reloadTime;
+	}
+
+	public float getReloadTimeLeft() {
+		return reloadTimeLeft;
+	}
+
+	@Override
     public void getDamaged(int damage) {
         hp -= damage;
     }
