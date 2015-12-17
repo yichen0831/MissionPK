@@ -7,6 +7,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -314,7 +315,18 @@ public class Player extends RigidBodyActor implements Damagable {
                 }
                 break;
             case DIE:
-                // TODO add animation
+            	sprite.setAlpha(0);
+            	if (stateTime <= 0.1f) {
+                	ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+                	for (int i = 0; i < 10; i++) {
+                	    actorBuilder.createDebris(x + MathUtils.random(RADIUS) * MathUtils.randomSign(), y + MathUtils.random(RADIUS) * MathUtils.randomSign(), tmpV1.set(MathUtils.random(-8f, 8f), MathUtils.random(-1f, 6f)));
+                	}
+            	}
+            	else {
+            		queue_remove();
+            	}
+            	body.setGravityScale(0);
+            	body.setLinearVelocity(0, 0);
                 break;
             case IDLE:
             default:
