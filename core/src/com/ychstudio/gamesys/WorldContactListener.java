@@ -7,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.ychstudio.actors.Bullet;
+import com.ychstudio.actors.Lethal;
 
 public class WorldContactListener implements ContactListener {
     
@@ -29,6 +30,16 @@ public class WorldContactListener implements ContactListener {
                 Bullet bullet = (Bullet) bodyB.getUserData();
                 bullet.hit(bodyA);
             }
+        }
+        else if (categoryA == GM.TRAP_BITS || categoryB == GM.TRAP_BITS) {
+        	if (categoryA == GM.TRAP_BITS) {
+        		Lethal trap = (Lethal) bodyA.getUserData();
+        		trap.hit(bodyB);
+        	}
+        	else {
+        		Lethal trap = (Lethal) bodyB.getUserData();
+        		trap.hit(bodyA);
+        	}
         }
     }
 
