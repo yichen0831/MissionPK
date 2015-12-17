@@ -183,9 +183,15 @@ public class Player extends RigidBodyActor implements Damagable {
         
         if (!dead) {
             checkGrounded();
+            
+            // cheat code
+            if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+                reloadTime = 0.1f;
+                grenadeGenTime = 0.1f;
+            }
 
             // fire
-            if (Gdx.input.isKeyPressed(Input.Keys.Z) && bullet_cd <= 0) {
+            if (Gdx.input.isKeyPressed(Input.Keys.A) && bullet_cd <= 0) {
             	if (ammo > 0 && !reload) {
             		bullet_cd = BULLET_CD;
             		fire = true;
@@ -202,14 +208,14 @@ public class Player extends RigidBodyActor implements Damagable {
             }
             
             // reload 
-            if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             	if (ammo < maxAmmo) {
             		reload =true;
             	}
             }
             
             // throw a grenade
-            if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
                 if (grenade > 0) {
                     grenade--;
                     ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
@@ -218,13 +224,20 @@ public class Player extends RigidBodyActor implements Damagable {
             }
 
             // jump
-            if (Gdx.input.isKeyJustPressed(Input.Keys.X)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
                 if (grounded) {
                     body.applyLinearImpulse(tmpV1.set(0, jumpForce * body.getMass()), body.getWorldCenter(), true);
                 }
             }
             
-            if (Gdx.input.isKeyPressed(Input.Keys.S) || Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            // aim down
+            if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+                // body.applyLinearImpulse(tmpV1.set(0, -speed),
+                // body.getWorldCenter(), true);
+            }
+            
+            // aim up
+            if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
                 // body.applyLinearImpulse(tmpV1.set(0, -speed),
                 // body.getWorldCenter(), true);
             }
