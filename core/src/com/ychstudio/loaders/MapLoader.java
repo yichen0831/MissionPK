@@ -8,11 +8,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer.Cell;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
@@ -28,6 +23,7 @@ public class MapLoader {
         
         TiledMap tiledMap = GM.getAssetManager().get("maps/" + filename, TiledMap.class);
         
+        // create basic map and objects
         TiledMapTileLayer tileLayer = (TiledMapTileLayer) tiledMap.getLayers().get("TileLayer1");
         if (tileLayer != null) {
             float tileSize = tileLayer.getTileWidth() / GM.PPM;
@@ -67,30 +63,20 @@ public class MapLoader {
             }
         }
         
-        MapLayer mapLayer = tiledMap.getLayers().get("Obstacles");
-        if (mapLayer != null) {
-            for (MapObject object : mapLayer.getObjects()) {
-                Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
-                correctRectangle(rectangle);
-
-                BodyDef bodyDef= new BodyDef();
-                bodyDef.type = BodyType.StaticBody;
-                bodyDef.position.set(rectangle.x + rectangle.width / 2f, rectangle.y + rectangle.height / 2f);
-                Body body = world.createBody(bodyDef);
-
-                PolygonShape shape = new PolygonShape();
-                shape.setAsBox(rectangle.width / 2f, rectangle.height / 2f);
-
-                FixtureDef fixtureDef = new FixtureDef();
-                fixtureDef.shape = shape;
-                fixtureDef.filter.categoryBits = GM.OBSTACLE_BITS;
-                fixtureDef.filter.maskBits = GM.PLAYER_BITS | GM.BULLET_BITS;
-                fixtureDef.friction = 0.6f;
-
-                body.createFixture(fixtureDef);
-                shape.dispose();
-            }
+        // create player
+        MapLayer playerLayer = tiledMap.getLayers().get("Player");
+        if (playerLayer == null) {
+        	GM.playerPos.set(2.5f, 3.5f);
         }
+        else {
+        	for (MapObject object : playerLayer.getObjects()) {
+        		Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+        		correctRectangle(rectangle);
+        		
+        		GM.playerPos.set(rectangle.x + rectangle.width / 2f, rectangle.y + rectangle.height / 2f);
+        	}
+        }
+        actorBuilder.createPlayer(GM.playerPos.x, GM.playerPos.y);
         
         return tiledMap;
     }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.actors.Player;
@@ -38,6 +39,8 @@ public class GM {
     
     private Array<AbstractActor> actorList;
     private Array<TileActor> tileList;
+    
+    public static final Vector2 playerPos = new Vector2();
     
     private GM() {
 

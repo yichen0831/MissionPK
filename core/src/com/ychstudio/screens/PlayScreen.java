@@ -15,7 +15,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.actors.Player;
 import com.ychstudio.actors.tiles.TileActor;
-import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 import com.ychstudio.gamesys.WorldContactListener;
 import com.ychstudio.gui.InfoGUI;
@@ -49,7 +48,6 @@ public class PlayScreen implements Screen {
         
         camera = new OrthographicCamera();
         viewport = new FitViewport(WIDTH, HEIGHT, camera);
-        camera.translate(WIDTH / 2f, HEIGHT / 2f);
         
         world = new World(new Vector2(0, -20f), true);
         world.setContactListener(new WorldContactListener());
@@ -59,12 +57,11 @@ public class PlayScreen implements Screen {
         
         tileList = GM.getTileList();
         
-        ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
-        actorBuilder.createPlayer(6f, 6f);
-        
         MapLoader.loadTiledMap("level_01.tmx", world);
         mapWidth = MapLoader.mapWidth;
         mapHeight = MapLoader.mapHeight;
+        
+        camera.position.set(GM.playerPos, 0);
         
         box2DDebugRenderer = new Box2DDebugRenderer();
         
