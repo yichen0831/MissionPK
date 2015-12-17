@@ -36,13 +36,13 @@ public class Player extends RigidBodyActor implements Damagable {
     private int hp = 100;
     
     private int maxAmmo = 8;
-    private int ammo = 8;
+    private int ammo = maxAmmo;
     
     private int maxGrenade = 5;
-    private int grenade = 5;
+    private int grenade = maxGrenade;
     
-    private float grenadeGenTime = 5f;
-    private float grenadeGenTimeLeft = 5f;
+    private float grenadeGenTime = 0.1f;
+    private float grenadeGenTimeLeft = grenadeGenTime;
     
     private float reloadTime = 3f;
     private float reloadTimeLeft = 0;
@@ -87,7 +87,7 @@ public class Player extends RigidBodyActor implements Damagable {
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = circleShape;
         fixtureDef.density = 0.5f;
-        fixtureDef.filter.categoryBits = GM.PLAYER_BIT;
+        fixtureDef.filter.categoryBits = GM.PLAYER_BITS;
         fixtureDef.filter.maskBits = GM.PLAYER_MASK_BITS;
 
         body.createFixture(fixtureDef);
@@ -329,13 +329,13 @@ public class Player extends RigidBodyActor implements Damagable {
         @Override
         public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
             if (fixture.getBody().equals(body)) {
-                return 1;
+                return -1;
             }
             short categoryBits = fixture.getFilterData().categoryBits;
-            if (categoryBits == GM.DEBRIS_BIT) {
-                return 1;
+            if (categoryBits == GM.DEBRIS_BITS) {
+                return -1;
             }
-            if (categoryBits == GM.OBSTACLE_BIT || categoryBits == GM.PLAYER_BIT || categoryBits == GM.GRENADE_BIT) {
+            if (categoryBits == GM.OBSTACLE_BITS || categoryBits == GM.PLAYER_BITS || categoryBits == GM.GRENADE_BITS) {
                 grounded = true;
             }
             return 0;

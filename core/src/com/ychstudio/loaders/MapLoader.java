@@ -83,8 +83,8 @@ public class MapLoader {
 
                 FixtureDef fixtureDef = new FixtureDef();
                 fixtureDef.shape = shape;
-                fixtureDef.filter.categoryBits = GM.OBSTACLE_BIT;
-                fixtureDef.filter.maskBits = GM.PLAYER_BIT | GM.BULLET_BIT;
+                fixtureDef.filter.categoryBits = GM.OBSTACLE_BITS;
+                fixtureDef.filter.maskBits = GM.PLAYER_BITS | GM.BULLET_BITS;
                 fixtureDef.friction = 0.6f;
 
                 body.createFixture(fixtureDef);

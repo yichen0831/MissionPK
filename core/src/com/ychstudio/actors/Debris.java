@@ -32,7 +32,7 @@ public class Debris extends RigidBodyActor {
         
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = GM.DEBRIS_BIT;
+        fixtureDef.filter.categoryBits = GM.DEBRIS_BITS;
         fixtureDef.filter.maskBits = GM.DEBRIS_MASK_BITS;
         fixtureDef.density = 0.1f;
         fixtureDef.friction = 0.8f;

@@ -38,7 +38,7 @@ public class GrassTile extends TileActor implements Damagable {
         
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = GM.OBSTACLE_BIT;
+        fixtureDef.filter.categoryBits = GM.OBSTACLE_BITS;
         fixtureDef.filter.maskBits = GM.OBSTACLE_MASK_BITS;
         
         body.createFixture(fixtureDef);
@@ -52,7 +52,7 @@ public class GrassTile extends TileActor implements Damagable {
         if (hp <= 0) {
             for (Fixture fixture : body.getFixtureList()) {
                 Filter filter = fixture.getFilterData();
-                filter.categoryBits = GM.NOTHING_BIT;
+                filter.categoryBits = GM.NOTHING_BITS;
                 fixture.setFilterData(filter);
             }
             

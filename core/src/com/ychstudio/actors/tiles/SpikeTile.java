@@ -26,7 +26,7 @@ public class SpikeTile extends TileActor {
         
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = GM.TRAP_BIT;
+        fixtureDef.filter.categoryBits = GM.TRAP_BITS;
         fixtureDef.filter.maskBits = GM.TRAP_MASK_BITS;
         
         body.createFixture(fixtureDef);

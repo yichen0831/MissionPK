@@ -24,7 +24,7 @@ public class BlockTile extends TileActor {
         
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = GM.OBSTACLE_BIT;
+        fixtureDef.filter.categoryBits = GM.OBSTACLE_BITS;
         fixtureDef.filter.maskBits = GM.OBSTACLE_MASK_BITS;
         
         body.createFixture(fixtureDef);

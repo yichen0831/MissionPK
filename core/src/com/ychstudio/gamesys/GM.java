@@ -14,23 +14,22 @@ public class GM {
     private static final GM instance = new GM();
     
     // category bits
-    public static final short NOTHING_BIT = 0;
-    public static final short PLAYER_BIT = 1 << 0;
-    public static final short OBSTACLE_BIT = 1 << 1;
-    public static final short BULLET_BIT = 1 << 2;
-    public static final short GRENADE_BIT = 1 << 3;
-    public static final short TRAP_BIT = 1 << 4;
-    public static final short EXPLOSION_BIT = 1 << 5;
-    public static final short DEBRIS_BIT = 1 << 6;
+    public static final short NOTHING_BITS = 0;
+    public static final short PLAYER_BITS = 1 << 0;
+    public static final short OBSTACLE_BITS = 1 << 1;
+    public static final short BULLET_BITS = 1 << 2;
+    public static final short GRENADE_BITS = 1 << 3;
+    public static final short TRAP_BITS = 1 << 4;
+    public static final short DEBRIS_BITS = 1 << 5;
     
     // mask bits
-    public static final short PLAYER_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT | GRENADE_BIT | TRAP_BIT | EXPLOSION_BIT;
-    public static final short OBSTACLE_MASK_BITS = PLAYER_BIT | BULLET_BIT | GRENADE_BIT | EXPLOSION_BIT | DEBRIS_BIT;
-    public static final short BULLET_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT | GRENADE_BIT | TRAP_BIT | EXPLOSION_BIT;
-    public static final short GRENADE_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT | GRENADE_BIT | TRAP_BIT | EXPLOSION_BIT;
-    public static final short TRAP_MASK_BITS = PLAYER_BIT | BULLET_BIT | GRENADE_BIT | EXPLOSION_BIT;
-    public static final short EXPLOSION_MASK_BITS = PLAYER_BIT | OBSTACLE_BIT | BULLET_BIT | GRENADE_BIT | TRAP_BIT | DEBRIS_BIT;
-    public static final short DEBRIS_MASK_BITS = OBSTACLE_BIT | EXPLOSION_BIT;
+    public static final short PLAYER_MASK_BITS = PLAYER_BITS | OBSTACLE_BITS | BULLET_BITS | GRENADE_BITS | TRAP_BITS;
+    public static final short OBSTACLE_MASK_BITS = PLAYER_BITS | BULLET_BITS | GRENADE_BITS | DEBRIS_BITS;
+    public static final short BULLET_MASK_BITS = PLAYER_BITS | OBSTACLE_BITS | BULLET_BITS | GRENADE_BITS | TRAP_BITS;
+    public static final short GRENADE_MASK_BITS = PLAYER_BITS | OBSTACLE_BITS | BULLET_BITS | GRENADE_BITS | TRAP_BITS;
+    public static final short TRAP_MASK_BITS = PLAYER_BITS | BULLET_BITS | GRENADE_BITS;
+    public static final short EXPLOSION_MASK_BITS = PLAYER_BITS | OBSTACLE_BITS | BULLET_BITS | GRENADE_BITS | TRAP_BITS | DEBRIS_BITS;
+    public static final short DEBRIS_MASK_BITS = OBSTACLE_BITS;
     
     public static final float PPM = 32;
     

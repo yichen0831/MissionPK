@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -17,7 +18,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.ychstudio.gamesys.GM;
 
-public class Bullet extends RigidBodyActor implements Damagable, Explodable {
+public class Bullet extends RigidBodyActor implements Damagable, Lethal {
 
     public enum State {
         FLY,
@@ -57,7 +58,7 @@ public class Bullet extends RigidBodyActor implements Damagable, Explodable {
         
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
-        fixtureDef.filter.categoryBits = GM.BULLET_BIT;
+        fixtureDef.filter.categoryBits = GM.BULLET_BITS;
         fixtureDef.filter.maskBits = GM.BULLET_MASK_BITS;
         
         body.createFixture(fixtureDef);
@@ -111,7 +112,7 @@ public class Bullet extends RigidBodyActor implements Damagable, Explodable {
                 body.setLinearVelocity(0, 0);
                 for (Fixture fixture : body.getFixtureList()) {
                     Filter filter = fixture.getFilterData();
-                    filter.categoryBits = GM.NOTHING_BIT;
+                    filter.categoryBits = GM.NOTHING_BITS;
                     fixture.setFilterData(filter);
                 }
             }
@@ -140,33 +141,25 @@ public class Bullet extends RigidBodyActor implements Damagable, Explodable {
         
     }
     
-    public void hitObject() {
-        hp = 0;
+    @Override
+    public void getDamaged(int damage) {
+        hp -= damage;
     }
     
-    public boolean isAlive() {
-        return hp > 0;
+    @Override
+    public void hit(Body otherBody) {
+        if (hp > 0) {
+            hp = 0;
+            RigidBodyActor other = (RigidBodyActor) otherBody.getUserData();
+            if (other instanceof Damagable) {
+                ((Damagable) other).getDamaged(POWER);
+            }
+        }
     }
     
     @Override
     public void dispose() {
         world.destroyBody(body);
     }
-
-    @Override
-    public void getDamaged(int damage) {
-        hp -= damage;
-    }
-
-    @Override
-    public int getExplosionPower() {
-        return POWER;
-    }
-
-    @Override
-    public float getExplosionRadius() {
-        return RADIUS;
-    }
-
 
 }
