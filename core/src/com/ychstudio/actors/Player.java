@@ -41,7 +41,7 @@ public class Player extends RigidBodyActor implements Damagable {
     private int maxGrenade = 5;
     private int grenade = maxGrenade;
     
-    private float grenadeGenTime = 0.1f;
+    private float grenadeGenTime = 3f;
     private float grenadeGenTimeLeft = grenadeGenTime;
     
     private float reloadTime = 3f;

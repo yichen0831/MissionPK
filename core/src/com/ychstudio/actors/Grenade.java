@@ -29,7 +29,9 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
 	private float countDown = 5f;
 	
 	private boolean explode = false;
-	private HashSet<Body> hitBodySet = new HashSet<>(); 
+	private HashSet<Body> hitBodySet = new HashSet<>();
+	private HashSet<Body> damageBodySet = new HashSet<>();
+	private Body damageBody;
 	
 	public Grenade(World world, TextureRegion textureRegion, float x, float y, float width, float height) {
 		super(world, textureRegion, x, y, width, height);
@@ -93,12 +95,26 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
         	
         	// explosion check 
         	hitBodySet.clear();
+        	damageBodySet.clear();
         	float rad = 0;
         	for (int i = 0; i < 120; i++) {
+        	    damageBody = null;
+        	    
         	    float x = body.getPosition().x + MathUtils.sin(rad) * EXPLOSION_RADIUS;
         	    float y = body.getPosition().y + MathUtils.cos(rad) * EXPLOSION_RADIUS;
         	    body.getWorld().rayCast(rayCastCallback, body.getPosition(), tmpV2.set(x, y));
+        	    
+        	    if (damageBody != null) {
+        	        damageBodySet.add(damageBody);
+        	    }
         	    rad += MathUtils.PI2 / 120;
+        	}
+        	
+        	for (Body dBody : damageBodySet) {
+                RigidBodyActor other = (RigidBodyActor) dBody.getUserData();
+                if (other instanceof Damagable) {
+                    ((Damagable) other).getDamaged(POWER);
+                }
         	}
         	
         	// make particle effect
@@ -127,17 +143,17 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
                 float force = dist > EXPLOSION_RADIUS ? 0 : EXPLOSION_RADIUS - dist;
                 
                 otherBody.applyLinearImpulse(tmpV1.nor().scl(force * 8f * otherBody.getMass()), otherBody.getWorldCenter(), true);
-                
-                RigidBodyActor other = (RigidBodyActor) otherBody.getUserData();
-                if (other instanceof Damagable) {
-                    ((Damagable) other).getDamaged(10);
-                }
+
             }
-            // terminate the ray
-            if (categoryBits == GM.OBSTACLE_BITS || categoryBits == GM.PLAYER_BITS) {
-                return 0;
+            
+            // ignore debris
+            if (categoryBits == GM.DEBRIS_BITS) {
+                return 1;
             }
-            return -1;
+            
+            // find the closest body for damage
+            damageBody = otherBody;
+            return fraction;
         }
 	};
 	

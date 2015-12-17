@@ -28,7 +28,6 @@ public class GM {
     public static final short BULLET_MASK_BITS = PLAYER_BITS | OBSTACLE_BITS | BULLET_BITS | GRENADE_BITS | TRAP_BITS;
     public static final short GRENADE_MASK_BITS = PLAYER_BITS | OBSTACLE_BITS | BULLET_BITS | GRENADE_BITS | TRAP_BITS;
     public static final short TRAP_MASK_BITS = PLAYER_BITS | BULLET_BITS | GRENADE_BITS;
-    public static final short EXPLOSION_MASK_BITS = PLAYER_BITS | OBSTACLE_BITS | BULLET_BITS | GRENADE_BITS | TRAP_BITS | DEBRIS_BITS;
     public static final short DEBRIS_MASK_BITS = OBSTACLE_BITS;
     
     public static final float PPM = 32;
