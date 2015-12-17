@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.ychstudio.gamesys.GM;
 
@@ -27,8 +27,8 @@ public class Debris extends RigidBodyActor {
         
         body = world.createBody(bodyDef);
         
-        CircleShape shape = new CircleShape();
-        shape.setRadius(radius);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(radius, radius);
         
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = shape;
