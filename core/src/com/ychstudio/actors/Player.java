@@ -191,7 +191,7 @@ public class Player extends RigidBodyActor implements Damagable {
             }
 
             // fire
-            if (Gdx.input.isKeyPressed(Input.Keys.A) && bullet_cd <= 0) {
+            if (Gdx.input.isKeyPressed(Input.Keys.S) && bullet_cd <= 0) {
             	if (ammo > 0 && !reload) {
             		bullet_cd = BULLET_CD;
             		fire = true;
@@ -224,7 +224,7 @@ public class Player extends RigidBodyActor implements Damagable {
             }
 
             // jump
-            if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
                 if (grounded) {
                     body.applyLinearImpulse(tmpV1.set(0, jumpForce * body.getMass()), body.getWorldCenter(), true);
                 }
