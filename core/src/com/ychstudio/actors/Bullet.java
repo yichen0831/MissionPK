@@ -115,6 +115,10 @@ public class Bullet extends RigidBodyActor implements Damagable, Lethal {
                     filter.categoryBits = GM.NOTHING_BITS;
                     fixture.setFilterData(filter);
                 }
+                
+                // play bullet explosion sound
+                // TODO check distance from the player
+                GM.playSound("BulletExplosion.ogg");
             }
         }
         

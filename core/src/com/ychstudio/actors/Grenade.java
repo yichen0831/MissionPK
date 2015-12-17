@@ -93,6 +93,9 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
         if ((hp <=0 || countDown <= 0) && !explode) {
         	explode = true;
         	
+        	// play grenade explosion sound
+        	GM.playSound("GrenadeExplosion.ogg");
+        	
         	// explosion check 
         	hitBodySet.clear();
         	damageBodySet.clear();

@@ -154,6 +154,9 @@ public class Player extends RigidBodyActor implements Damagable {
         if (hp <= 0 && !dead) {
             stateTime = 0;
             dead = true;
+            
+            // play death sound
+            GM.playSound("Death.ogg");
         }
         
         // reload
@@ -187,6 +190,10 @@ public class Player extends RigidBodyActor implements Damagable {
             
             // cheat code
             if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            	
+            	// play Da sound
+            	GM.playSound("Da.ogg");
+            	
                 reloadTime = 0.1f;
                 grenadeGenTime = 0.1f;
             }
@@ -198,6 +205,9 @@ public class Player extends RigidBodyActor implements Damagable {
             		fire = true;
             		ammo -= 1;
             		ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+            		
+            		// play shooting sound
+            		GM.playSound("Shoot.ogg");
             		if (faceRight) {
             			tmpV1.set(1, 0);
             			actorBuilder.createBullet(x + 0.5f, y - 0.2f, tmpV1);
@@ -219,6 +229,10 @@ public class Player extends RigidBodyActor implements Damagable {
             if (Gdx.input.isKeyJustPressed(Input.Keys.Q)) {
                 if (grenade > 0) {
                     grenade--;
+                    
+                    // play throw grenade sound
+                    GM.playSound("ThrowGrenade.ogg");
+                    
                     ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
                     actorBuilder.createGrenade(x + (faceRight ? 0.3f : -0.3f), y + 0.3f, faceRight ? 1 : -1);
                 }
@@ -228,6 +242,9 @@ public class Player extends RigidBodyActor implements Damagable {
             if (Gdx.input.isKeyJustPressed(Input.Keys.A)) {
                 if (grounded) {
                     body.applyLinearImpulse(tmpV1.set(0, jumpForce * body.getMass()), body.getWorldCenter(), true);
+                    
+                    // play jump sound
+                    GM.playSound("Jump.ogg");
                 }
             }
             

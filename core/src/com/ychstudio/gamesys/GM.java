@@ -2,6 +2,7 @@ package com.ychstudio.gamesys;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -47,9 +48,22 @@ public class GM {
         assetManager = new AssetManager();
         assetManager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
         
+        // images
         assetManager.load("img/actors.pack", TextureAtlas.class);
         assetManager.load("img/tiles.pack", TextureAtlas.class);
+        
+        // sounds
+        assetManager.load("sounds/Da.ogg", Sound.class);
+        assetManager.load("sounds/Jump.ogg", Sound.class);
+        assetManager.load("sounds/Shoot.ogg", Sound.class);
+        assetManager.load("sounds/ThrowGrenade.ogg", Sound.class);
+        assetManager.load("sounds/Death.ogg", Sound.class);
+        assetManager.load("sounds/BulletExplosion.ogg", Sound.class);
+        assetManager.load("sounds/GrenadeExplosion.ogg", Sound.class);
+        
+        // maps
         assetManager.load("maps/level_01.tmx", TiledMap.class);
+        
         assetManager.finishLoading();
         
         actorList = new Array<>();
@@ -78,6 +92,11 @@ public class GM {
     
     public static Player getPlayer() {
         return instance.player;
+    }
+    
+    public static void playSound(String soundName) {
+    	Sound sound = instance.assetManager.get("sounds/" + soundName, Sound.class);
+    	sound.play();
     }
     
     public void dispose() {
