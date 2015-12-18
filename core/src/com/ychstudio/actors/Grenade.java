@@ -117,7 +117,8 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
         	for (Body dBody : damageBodySet) {
                 RigidBodyActor other = (RigidBodyActor) dBody.getUserData();
                 if (other instanceof Damagable) {
-                    ((Damagable) other).getDamaged(POWER);
+                    float dist2 = body.getPosition().dst2(dBody.getPosition());
+                    ((Damagable) other).getDamaged((int) (POWER * (1f - dist2 / (EXPLOSION_RADIUS * EXPLOSION_RADIUS))));
                 }
         	}
         	
