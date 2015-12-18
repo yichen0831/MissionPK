@@ -66,17 +66,17 @@ public class MapLoader {
         // create player
         MapLayer playerLayer = tiledMap.getLayers().get("Player");
         if (playerLayer == null) {
-        	GM.playerPos.set(2.5f, 3.5f);
+        	GM.playerSpawnPos.set(2.5f, 3.5f);
         }
         else {
         	for (MapObject object : playerLayer.getObjects()) {
         		Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
         		correctRectangle(rectangle);
         		
-        		GM.playerPos.set(rectangle.x + rectangle.width / 2f, rectangle.y + rectangle.height / 2f);
+        		GM.playerSpawnPos.set(rectangle.x + rectangle.width / 2f, rectangle.y + rectangle.height / 2f);
         	}
         }
-        actorBuilder.createPlayer(GM.playerPos.x, GM.playerPos.y);
+        actorBuilder.createPlayer(GM.playerSpawnPos.x, GM.playerSpawnPos.y);
         
         return tiledMap;
     }

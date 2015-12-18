@@ -22,8 +22,8 @@ import com.ychstudio.loaders.MapLoader;
 
 public class PlayScreen implements Screen {
 
-    private final float WIDTH = 16f;
-    private final float HEIGHT = 9f;
+    public static final float WIDTH = 16f;
+    public static final float HEIGHT = 9f;
     
     private float mapWidth;
     private float mapHeight;
@@ -61,7 +61,7 @@ public class PlayScreen implements Screen {
         mapWidth = MapLoader.mapWidth;
         mapHeight = MapLoader.mapHeight;
         
-        camera.position.set(GM.playerPos, 0);
+        camera.position.set(GM.playerSpawnPos, 0);
         
         box2DDebugRenderer = new Box2DDebugRenderer();
         

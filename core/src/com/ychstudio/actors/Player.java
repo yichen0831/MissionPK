@@ -207,7 +207,8 @@ public class Player extends RigidBodyActor implements Damagable {
             		ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
             		
             		// play shooting sound
-            		GM.playSound("Shoot.ogg");
+            		GM.playSound("Shoot.ogg", 1.0f, MathUtils.random(0.8f, 1.2f), 0f);
+            		
             		if (faceRight) {
             			tmpV1.set(1, 0);
             			actorBuilder.createBullet(x + 0.5f, y - 0.2f, tmpV1);

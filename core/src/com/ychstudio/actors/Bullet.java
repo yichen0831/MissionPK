@@ -117,8 +117,7 @@ public class Bullet extends RigidBodyActor implements Damagable, Lethal {
                 }
                 
                 // play bullet explosion sound
-                // TODO check distance from the player
-                GM.playSound("BulletExplosion.ogg");
+                GM.playSoundByPlayerDst("BulletExplosion.ogg", body.getPosition());
             }
         }
         

@@ -6,11 +6,13 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.actors.Player;
 import com.ychstudio.actors.tiles.TileActor;
+import com.ychstudio.screens.PlayScreen;
 
 public class GM {
     private static final GM instance = new GM();
@@ -41,7 +43,8 @@ public class GM {
     private Array<AbstractActor> actorList;
     private Array<TileActor> tileList;
     
-    public static final Vector2 playerPos = new Vector2();
+    // player spawn position
+    public static final Vector2 playerSpawnPos = new Vector2();
     
     private GM() {
 
@@ -97,6 +100,26 @@ public class GM {
     public static void playSound(String soundName) {
     	Sound sound = instance.assetManager.get("sounds/" + soundName, Sound.class);
     	sound.play();
+    }
+    
+    public static void playSound(String soundName, float volume, float pitch, float pan) {
+        Sound sound = instance.assetManager.get("sounds/" + soundName, Sound.class);
+        sound.play(volume, pitch, pan);
+    }
+    
+    public static void playSoundByPlayerDst(String soundName, Vector2 pos) {
+        float volume = 1.0f;
+        float pan = 0;
+        if (instance.player != null) {
+            float dist2 = pos.dst2(instance.player.getPosition()) ;
+            float screenDst2 = PlayScreen.WIDTH * PlayScreen.HEIGHT / 4;
+            if (dist2 >= screenDst2) {
+                volume = screenDst2 / dist2;
+            }
+            
+            pan = (pos.x - instance.player.getPosition().x) / PlayScreen.WIDTH;
+        }
+        GM.playSound(soundName, volume, MathUtils.random(0.8f, 1.2f), pan);
     }
     
     public void dispose() {

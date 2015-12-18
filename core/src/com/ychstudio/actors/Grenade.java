@@ -19,7 +19,7 @@ import com.ychstudio.gamesys.GM;
 
 public class Grenade extends RigidBodyActor implements Damagable, Lethal {
 
-    public static final int POWER = 10;
+    public static final int POWER = 12;
     public static final float EXPLOSION_RADIUS = 1.6f;
     
 	private static final float radius = 0.2f;
@@ -88,7 +88,7 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
         	explode = true;
         	
         	// play grenade explosion sound
-        	GM.playSound("GrenadeExplosion.ogg");
+        	GM.playSoundByPlayerDst("GrenadeExplosion.ogg", body.getPosition());
         	
         	// set explosion image
         	TextureRegion textureAtlasRegion = GM.getAssetManager().get("img/actors.pack", TextureAtlas.class).findRegion("Grenade");
@@ -117,8 +117,9 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
         	for (Body dBody : damageBodySet) {
                 RigidBodyActor other = (RigidBodyActor) dBody.getUserData();
                 if (other instanceof Damagable) {
-                    float dist2 = body.getPosition().dst2(dBody.getPosition());
-                    ((Damagable) other).getDamaged((int) (POWER * (1f - dist2 / (EXPLOSION_RADIUS * EXPLOSION_RADIUS))));
+                    float radius2 = EXPLOSION_RADIUS * EXPLOSION_RADIUS;
+                    float dist2 = Math.min(body.getPosition().dst2(dBody.getPosition()), radius2);
+                    ((Damagable) other).getDamaged((int) (POWER * (1f - dist2 / radius2)));
                 }
         	}
         	
