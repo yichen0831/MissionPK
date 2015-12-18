@@ -232,7 +232,7 @@ public class Player extends RigidBodyActor implements Damagable {
                     grenade--;
                     
                     // play throw grenade sound
-                    GM.playSound("ThrowGrenade.ogg");
+                    GM.playSound("ThrowGrenade.ogg", 1.0f, MathUtils.random(0.9f, 1.1f), 0);
                     
                     ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
                     actorBuilder.createGrenade(x + (faceRight ? 0.3f : -0.3f), y + 0.3f, faceRight ? 1 : -1);
@@ -342,6 +342,7 @@ public class Player extends RigidBodyActor implements Damagable {
             	}
             	else {
             		queue_remove();
+            		GM.setPlayer(null);
             	}
             	body.setGravityScale(0);
             	body.setLinearVelocity(0, 0);
