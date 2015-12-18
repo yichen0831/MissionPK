@@ -2,6 +2,7 @@ package com.ychstudio.actors;
 
 import java.util.HashSet;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -77,13 +78,6 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
 	@Override
 	public void update(float delta) {
 		countDown -= delta;
-		
-        x = body.getPosition().x;
-        y = body.getPosition().y;
-        
-        sprite.setPosition(x - width / 2f, y - height / 2f);
-
-        sprite.setRotation(MathUtils.radiansToDegrees * body.getAngle());
         
         if (explode) {
         	queue_remove();
@@ -95,6 +89,13 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
         	
         	// play grenade explosion sound
         	GM.playSound("GrenadeExplosion.ogg");
+        	
+        	// set explosion image
+        	TextureRegion textureAtlasRegion = GM.getAssetManager().get("img/actors.pack", TextureAtlas.class).findRegion("Grenade");
+        	TextureRegion explosionTextureRegion = new TextureRegion(textureAtlasRegion, 32 * 1, 0, 32, 32);
+        	sprite.setRegion(explosionTextureRegion);
+        	sprite.setSize(EXPLOSION_RADIUS * 2, EXPLOSION_RADIUS * 2);
+        	sprite.setOriginCenter();
         	
         	// explosion check 
         	hitBodySet.clear();
@@ -126,6 +127,13 @@ public class Grenade extends RigidBodyActor implements Damagable, Lethal {
         	    actorBuilder.createDebris(x, y, tmpV1.set(MathUtils.random(-8f, 8f), MathUtils.random(-1f, 12f)));
         	}
         }
+        
+        x = body.getPosition().x;
+        y = body.getPosition().y;
+        
+        sprite.setPosition(x - sprite.getWidth() / 2f, y - sprite.getHeight() / 2f);
+
+        sprite.setRotation(MathUtils.radiansToDegrees * body.getAngle());
 	}
 	
 	private RayCastCallback rayCastCallback = new RayCastCallback() {

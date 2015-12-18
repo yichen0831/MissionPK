@@ -9,7 +9,6 @@ public abstract class AbstractActor implements Disposable {
     
     protected Sprite sprite;
     protected float x, y;
-    protected float width, height;
     
     protected boolean removed = false;
     
@@ -18,8 +17,6 @@ public abstract class AbstractActor implements Disposable {
         sprite.setBounds(x, y, width, height);
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
     }
     
     public abstract void update(float delta);

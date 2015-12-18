@@ -141,7 +141,7 @@ public class Bullet extends RigidBodyActor implements Damagable, Lethal {
         x = body.getPosition().x;
         y = body.getPosition().y;
         
-        sprite.setPosition(x - width / 2f, y - height / 2f);
+        sprite.setPosition(x - sprite.getWidth() / 2f, y - sprite.getHeight() / 2f);
         
     }
     

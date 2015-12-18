@@ -59,7 +59,7 @@ public class Debris extends RigidBodyActor {
         x = body.getPosition().x;
         y = body.getPosition().y;
         
-        sprite.setPosition(x - width / 2f, y - height / 2f);
+        sprite.setPosition(x - sprite.getWidth() / 2f, y - sprite.getHeight() / 2f);
         sprite.setRotation(MathUtils.radiansToDegrees * body.getAngle());
     }
     
