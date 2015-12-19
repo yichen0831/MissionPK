@@ -64,6 +64,7 @@ public class Player extends RigidBodyActor implements Damagable {
     
     // flag
     private boolean faceRight = true;
+    private boolean fireButtonPressed = false;
     private boolean grounded;
     private boolean dead = false;
 
@@ -199,8 +200,9 @@ public class Player extends RigidBodyActor implements Damagable {
             }
 
             // fire
-            if (Gdx.input.isKeyPressed(Input.Keys.S) && bullet_cd <= 0) {
-            	if (ammo > 0 && !reload) {
+            if (Gdx.input.isKeyPressed(Input.Keys.S)) {
+                fireButtonPressed = true;
+            	if (ammo > 0 && !reload && bullet_cd <= 0) {
             		bullet_cd = BULLET_CD;
             		fire = true;
             		ammo -= 1;
@@ -217,6 +219,9 @@ public class Player extends RigidBodyActor implements Damagable {
             			actorBuilder.createBullet(x - 0.5f, y - 0.2f, tmpV1);
             		}
             	}
+            }
+            else {
+                fireButtonPressed = false;
             }
             
             // reload 
@@ -251,18 +256,18 @@ public class Player extends RigidBodyActor implements Damagable {
             
             // aim down
             if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-                // body.applyLinearImpulse(tmpV1.set(0, -speed),
-                // body.getWorldCenter(), true);
             }
             
             // aim up
             if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-                // body.applyLinearImpulse(tmpV1.set(0, -speed),
-                // body.getWorldCenter(), true);
             }
 
             // move left
             if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+                // if fire button is pressed, do not change facing direction
+                if (!fireButtonPressed) {
+                    faceRight = false;
+                }
                 if (grounded) {
                     body.applyLinearImpulse(tmpV1.set(-moveForceGround * body.getMass(), 0), body.getWorldCenter(), true);
                 }
@@ -276,6 +281,10 @@ public class Player extends RigidBodyActor implements Damagable {
 
             // move right
             if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                // if fire button is pressed, do not change facing direction
+                if (!fireButtonPressed) {
+                    faceRight = true;
+                }
                 if (grounded) {
                     body.applyLinearImpulse(tmpV1.set(moveForceGround * body.getMass(), 0), body.getWorldCenter(), true);
                 }
@@ -354,11 +363,6 @@ public class Player extends RigidBodyActor implements Damagable {
         }
 
         sprite.setRegion(animation.getKeyFrame(stateTime));
-        if (body.getLinearVelocity().x < -1f) {
-            faceRight = false;
-        } else if (body.getLinearVelocity().x > 1f) {
-            faceRight = true;
-        }
 
         sprite.setFlip(!faceRight, false);
 
