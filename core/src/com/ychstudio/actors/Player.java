@@ -171,7 +171,7 @@ public class Player extends RigidBodyActor implements Damagable {
         }
         else {
             if (ammo <= 0) {
-                reload = true;
+                reloadGun();
             }
             reloadTimeLeft = reloadTime;
         }
@@ -232,7 +232,7 @@ public class Player extends RigidBodyActor implements Damagable {
             // reload 
             if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             	if (ammo < maxAmmo) {
-            		reload =true;
+            		reloadGun();
             	}
             }
             
@@ -417,6 +417,11 @@ public class Player extends RigidBodyActor implements Damagable {
         return grounded;
     }
     
+    private void reloadGun() {
+        reload = true;
+        GM.playSound("Reload.ogg");
+    }
+     
     public Vector2 getPosition() {
         return body.getPosition();
     }

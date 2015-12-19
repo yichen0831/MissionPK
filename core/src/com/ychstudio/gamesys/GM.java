@@ -59,6 +59,7 @@ public class GM {
         assetManager.load("sounds/Da.ogg", Sound.class);
         assetManager.load("sounds/Jump.ogg", Sound.class);
         assetManager.load("sounds/Shoot.ogg", Sound.class);
+        assetManager.load("sounds/Reload.ogg", Sound.class);
         assetManager.load("sounds/ThrowGrenade.ogg", Sound.class);
         assetManager.load("sounds/Death.ogg", Sound.class);
         assetManager.load("sounds/BulletExplosion.ogg", Sound.class);
