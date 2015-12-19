@@ -11,10 +11,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.EdgeShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
@@ -24,10 +24,10 @@ import com.ychstudio.gamesys.GM;
 public class Player extends RigidBodyActor implements Damagable {
 
     public enum State {
-        IDLE, WALK, FIRE, JUMP, DIE
+        IDLE, WALK, WALK_FIRE, FIRE, JUMP, DIE
     }
 
-    private static final float RADIUS = 0.3f;
+    private static final float RADIUS = 0.2f;
 
     private float moveForceGround = 0.8f;
     private float moveForceAir = 0.5f;
@@ -81,27 +81,22 @@ public class Player extends RigidBodyActor implements Damagable {
         bodyDef.position.set(x, y);
         body = world.createBody(bodyDef);
         body.setUserData(this);
-
-        CircleShape circleShape = new CircleShape();
-        circleShape.setRadius((RADIUS / 1.2f));
-        circleShape.setPosition(tmpV1.set(0, 0.1f));
+        
+        PolygonShape polygonShape = new PolygonShape();
+        polygonShape.setAsBox(RADIUS - 0.02f, RADIUS * 2, tmpV1.set(0, -0.04f), 0);
 
         FixtureDef fixtureDef = new FixtureDef();
-        fixtureDef.shape = circleShape;
+        fixtureDef.shape = polygonShape;
         fixtureDef.density = 0.5f;
         fixtureDef.filter.categoryBits = GM.PLAYER_BITS;
         fixtureDef.filter.maskBits = GM.PLAYER_MASK_BITS;
 
         body.createFixture(fixtureDef);
         
-        circleShape.setRadius(RADIUS);
-        circleShape.setPosition(tmpV1.set(0, -0.16f));
-        body.createFixture(fixtureDef);
-        
-        circleShape.dispose();
+        polygonShape.dispose();
         
         EdgeShape edgeShape = new EdgeShape();
-        edgeShape.set(-RADIUS, -(RADIUS + 0.18f), RADIUS, -(RADIUS + 0.18f));
+        edgeShape.set(-RADIUS, -(RADIUS + 0.28f), RADIUS, -(RADIUS + 0.28f));
         
         fixtureDef.shape = edgeShape;
         fixtureDef.friction = 0.5f;
@@ -123,7 +118,7 @@ public class Player extends RigidBodyActor implements Damagable {
         for (int i = 0; i < 4; i++) {
             keyFrames.add(new TextureRegion(textureRegion, 32 * i, 0, 32, 32));
         }
-        animation = new Animation(0.1f, keyFrames, Animation.PlayMode.LOOP_PINGPONG);
+        animation = new Animation(0.1f, keyFrames, Animation.PlayMode.LOOP);
         animMap.put("move", animation);
 
         keyFrames.clear();
@@ -143,6 +138,16 @@ public class Player extends RigidBodyActor implements Damagable {
         }
         animation = new Animation(0.1f, keyFrames, Animation.PlayMode.NORMAL);
         animMap.put("jump", animation);
+        
+        keyFrames.clear();
+        
+        // fire when walking
+        for (int i = 12; i < 18; i++) {
+            keyFrames.add(new TextureRegion(textureRegion, 32 * i, 0, 32, 32));
+        }
+        animation = new Animation(BULLET_CD / 5f, keyFrames, Animation.PlayMode.NORMAL);
+        animMap.put("fire_walk", animation);
+        
 
     }
 
@@ -299,8 +304,12 @@ public class Player extends RigidBodyActor implements Damagable {
             // determine state 
             if (grounded) {
                 if (Math.abs(body.getLinearVelocity().x) > 0.05f) {
-                    state = State.WALK;
-                    fire = false; // skip fire animation
+                    if (fire) {
+                        state = State.WALK_FIRE;
+                    }
+                    else {
+                        state = State.WALK;
+                    }
                 } else {
                     if (fire) {
                         state = State.FIRE;
@@ -331,6 +340,12 @@ public class Player extends RigidBodyActor implements Damagable {
         switch (state) {
             case JUMP:
                 animation = animMap.get("jump");
+                break;
+            case WALK_FIRE:
+                animation = animMap.get("fire_walk");
+                if (animation.isAnimationFinished(stateTime)) {
+                    fire = false;
+                }
                 break;
             case WALK:
                 animation = animMap.get("move");
@@ -395,7 +410,7 @@ public class Player extends RigidBodyActor implements Damagable {
 
         for (int i = -1; i <= 1; i++) {
             tmpV1.set(body.getPosition().x + i * RADIUS, body.getPosition().y);
-            tmpV2.set(tmpV1.x, tmpV1.y - (RADIUS + 0.25f));
+            tmpV2.set(tmpV1.x, tmpV1.y - (RADIUS + 0.3f));
             world.rayCast(rayCastCallback, tmpV1, tmpV2);
         }
 

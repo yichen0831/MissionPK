@@ -5,35 +5,35 @@ filter: Nearest,Nearest
 repeat: none
 Gunner
   rotate: false
-  xy: 1, 1
-  size: 384, 32
-  orig: 384, 32
+  xy: 1, 69
+  size: 576, 32
+  orig: 576, 32
   offset: 0, 0
   index: -1
 Bullet
   rotate: false
-  xy: 387, 1
+  xy: 1, 35
   size: 256, 32
   orig: 256, 32
   offset: 0, 0
   index: -1
 Debris
   rotate: false
-  xy: 645, 1
+  xy: 579, 69
   size: 128, 32
   orig: 128, 32
   offset: 0, 0
   index: -1
 Grenade
   rotate: false
-  xy: 775, 1
+  xy: 1, 1
   size: 64, 32
   orig: 64, 32
   offset: 0, 0
   index: -1
 Bar
   rotate: false
-  xy: 841, 1
+  xy: 259, 35
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
