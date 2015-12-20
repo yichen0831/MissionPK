@@ -45,7 +45,7 @@ public class Player extends RigidBodyActor implements Damagable {
     private float grenadeGenTime = 3f;
     private float grenadeGenTimeLeft = grenadeGenTime;
     
-    private float reloadTime = 3f;
+    private float reloadTime = 1.2f;
     private float reloadTimeLeft = 0;
 
     private static final float BULLET_CD = 0.2f;
@@ -218,10 +218,10 @@ public class Player extends RigidBodyActor implements Damagable {
             		
             		if (faceRight) {
             			tmpV1.set(1, 0);
-            			actorBuilder.createBullet(x + 0.5f, y - 0.2f, tmpV1);
+            			actorBuilder.createBullet(x + (RADIUS + 0.2f), y - 0.2f, tmpV1);
             		} else {
             			tmpV1.set(-1, 0);
-            			actorBuilder.createBullet(x - 0.5f, y - 0.2f, tmpV1);
+            			actorBuilder.createBullet(x - (RADIUS + 0.2f), y - 0.2f, tmpV1);
             		}
             	}
             }
