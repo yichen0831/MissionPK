@@ -231,7 +231,7 @@ public class Player extends RigidBodyActor implements Damagable {
             
             // reload 
             if (Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-            	if (ammo < maxAmmo) {
+            	if (ammo < maxAmmo && !reload) {
             		reloadGun();
             	}
             }
