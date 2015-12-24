@@ -5,7 +5,9 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -67,6 +69,9 @@ public class Player extends RigidBodyActor implements Damagable {
     private boolean fireButtonPressed = false;
     private boolean grounded;
     private boolean dead = false;
+    private boolean damaged = false; // for damaged animation
+    
+    private float damagedCountDown;
 
     private final Vector2 tmpV1 = new Vector2();
     private final Vector2 tmpV2 = new Vector2();
@@ -383,8 +388,28 @@ public class Player extends RigidBodyActor implements Damagable {
 
         x = body.getPosition().x;
         y = body.getPosition().y;
+        
+        if (damaged) {
+            damagedCountDown -= delta;
+            if (damagedCountDown < 0) {
+                damaged = false;
+            }
+        }
+        
 
         sprite.setPosition(x - sprite.getWidth() / 2f, y - sprite.getHeight() / 2f);
+    }
+    
+    @Override
+    public void draw(SpriteBatch batch) {
+        if (damaged) {
+            sprite.setColor(0.058823529f, 0.219607843f, 0.058823529f, 1.0f);
+        }
+        else {
+            sprite.setColor(Color.WHITE);
+        }
+        
+        sprite.draw(batch);
     }
     
     private RayCastCallback rayCastCallback = new RayCastCallback() {
@@ -457,6 +482,10 @@ public class Player extends RigidBodyActor implements Damagable {
 	@Override
     public void getDamaged(int damage) {
         hp -= damage;
+        if (damage > 0) {
+            damaged = true;
+            damagedCountDown = 0.2f;
+        }
     }
 
     @Override
