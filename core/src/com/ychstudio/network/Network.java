@@ -7,6 +7,9 @@ public class Network {
     
     public static final int PORT = 19234;
     
+    public static final int FAKE_PORT = 19238; // not actually used
+    public static final int UDP_PORT = 19239; // for broadcasting
+    
     public static void register(EndPoint endPoint) {
         Kryo kryo = endPoint.getKryo();
         kryo.register(LoginRequire.class);

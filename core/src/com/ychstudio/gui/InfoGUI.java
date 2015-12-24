@@ -11,7 +11,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.kotcrab.vis.ui.VisUI;
 import com.kotcrab.vis.ui.widget.VisLabel;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.ychstudio.actors.Player;
@@ -45,8 +44,6 @@ public class InfoGUI implements Disposable {
     private float playerReloadTimeLeft;
     
     public InfoGUI() {
-        VisUI.load();
-        
         batch = new SpriteBatch();
         
         viewport = new FitViewport(screenWidth, screenHeight);
@@ -146,7 +143,6 @@ public class InfoGUI implements Disposable {
         font.dispose();
         stage.dispose();
         batch.dispose();
-        VisUI.dispose();
     }
 
 }

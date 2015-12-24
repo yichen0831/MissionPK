@@ -18,6 +18,7 @@ import com.ychstudio.actors.tiles.TileActor;
 import com.ychstudio.gamesys.GM;
 import com.ychstudio.gamesys.WorldContactListener;
 import com.ychstudio.gui.InfoGUI;
+import com.ychstudio.gui.NetworkGUI;
 import com.ychstudio.loaders.MapLoader;
 
 public class PlayScreen implements Screen {
@@ -41,6 +42,8 @@ public class PlayScreen implements Screen {
     private Array<TileActor> tileList;
     
     private InfoGUI infoGUI;
+    private NetworkGUI networkGUI;
+    private boolean showNetworkGUI = false;
     
     @Override
     public void show() {
@@ -66,12 +69,17 @@ public class PlayScreen implements Screen {
         box2DDebugRenderer = new Box2DDebugRenderer();
         
         infoGUI = new InfoGUI();
+        networkGUI = new NetworkGUI();
     }
     
     
     private void update(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.B)) {
             showBox2DDebugRenderer = !showBox2DDebugRenderer;
+        }
+        
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+            showNetworkGUI = !showNetworkGUI;
         }
         
         for (int i = tileList.size - 1; i >= 0; i--) {
@@ -157,6 +165,9 @@ public class PlayScreen implements Screen {
         }
         
         infoGUI.draw();
+        if (showNetworkGUI) {
+            networkGUI.draw();
+        }
     }
 
     @Override
@@ -184,6 +195,7 @@ public class PlayScreen implements Screen {
         batch.dispose();
         world.dispose();
         infoGUI.dispose();
+        networkGUI.dispose();
     }
 
 }
