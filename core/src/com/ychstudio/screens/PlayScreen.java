@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.actors.Player;
 import com.ychstudio.actors.tiles.TileActor;
+import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 import com.ychstudio.gamesys.WorldContactListener;
 import com.ychstudio.gui.InfoGUI;
@@ -64,7 +65,7 @@ public class PlayScreen implements Screen {
         mapWidth = MapLoader.mapWidth;
         mapHeight = MapLoader.mapHeight;
         
-        camera.position.set(GM.playerSpawnPos, 0);
+        camera.position.set(GM.player1SpawnPos, 0);
         
         box2DDebugRenderer = new Box2DDebugRenderer();
         
@@ -80,6 +81,14 @@ public class PlayScreen implements Screen {
         
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             showNetworkGUI = !showNetworkGUI;
+        }
+        
+        if (GM.getPlayer() == null) {
+            // re-spawn player
+            if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+                ActorBuilder actorBuilder = ActorBuilder.getInstance(world);
+                actorBuilder.createPlayer(GM.player1SpawnPos.x, GM.player1SpawnPos.y);
+            }
         }
         
         for (int i = tileList.size - 1; i >= 0; i--) {

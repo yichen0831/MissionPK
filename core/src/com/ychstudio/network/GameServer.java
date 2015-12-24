@@ -11,6 +11,7 @@ import com.esotericsoftware.kryonet.Server;
 public class GameServer implements Disposable {
     
     Server server;
+    Server udpServer; // for broadcasting
     
     HashSet<LoggedInPlayer> players;
     
@@ -25,6 +26,13 @@ public class GameServer implements Disposable {
     }
     
     public GameServer() {
+        udpServer = new Server();
+        try {
+            udpServer.bind(Network.FAKE_PORT, Network.UDP_PORT);
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        
         server = new Server() {
 
             @Override

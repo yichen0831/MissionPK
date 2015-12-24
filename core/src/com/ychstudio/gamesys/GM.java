@@ -43,8 +43,9 @@ public class GM {
     private Array<AbstractActor> actorList;
     private Array<TileActor> tileList;
     
-    // player spawn position
-    public static final Vector2 playerSpawnPos = new Vector2();
+    // player spawn positions
+    public static final Vector2 player1SpawnPos = new Vector2();
+    public static final Vector2 player2SpawnPos = new Vector2();
     
     private GM() {
 

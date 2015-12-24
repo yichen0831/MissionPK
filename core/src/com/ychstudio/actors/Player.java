@@ -20,10 +20,11 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.RayCastCallback;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Disposable;
 import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 
-public class Player extends RigidBodyActor implements Damagable {
+public class Player extends RigidBodyActor implements Damagable, Disposable {
 
     public enum State {
         IDLE, WALK, WALK_FIRE, FIRE, JUMP, DIE
@@ -477,6 +478,10 @@ public class Player extends RigidBodyActor implements Damagable {
 	
 	public int getHP() {
 	    return hp;
+	}
+	
+	public boolean isDead() {
+	    return hp <= 0;
 	}
 	
 	@Override
