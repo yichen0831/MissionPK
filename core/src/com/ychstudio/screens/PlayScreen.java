@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.ychstudio.MissionPK;
 import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.actors.Player;
 import com.ychstudio.actors.tiles.TileActor;
@@ -19,7 +20,7 @@ import com.ychstudio.builders.ActorBuilder;
 import com.ychstudio.gamesys.GM;
 import com.ychstudio.gamesys.WorldContactListener;
 import com.ychstudio.gui.InfoGUI;
-import com.ychstudio.gui.NetworkGUI;
+import com.ychstudio.gui.OptionGUI;
 import com.ychstudio.loaders.MapLoader;
 
 public class PlayScreen implements Screen {
@@ -29,6 +30,8 @@ public class PlayScreen implements Screen {
     
     private float mapWidth;
     private float mapHeight;
+    
+    private final MissionPK game;
     
     private FitViewport viewport;
     private OrthographicCamera camera;
@@ -43,8 +46,15 @@ public class PlayScreen implements Screen {
     private Array<TileActor> tileList;
     
     private InfoGUI infoGUI;
-    private NetworkGUI networkGUI;
-    private boolean showNetworkGUI = false;
+    private OptionGUI optionGUI;
+    private boolean showOptionGUI = false;
+    
+    private boolean restart = false;
+    private boolean backToMainMenu = false;
+    
+    public PlayScreen(MissionPK game) {
+        this.game = game;
+    }
     
     @Override
     public void show() {
@@ -60,6 +70,7 @@ public class PlayScreen implements Screen {
         actorList.clear();
         
         tileList = GM.getTileList();
+        tileList.clear();
         
         MapLoader.loadTiledMap("level_01.tmx", world);
         mapWidth = MapLoader.mapWidth;
@@ -70,7 +81,8 @@ public class PlayScreen implements Screen {
         box2DDebugRenderer = new Box2DDebugRenderer();
         
         infoGUI = new InfoGUI();
-        networkGUI = new NetworkGUI();
+        optionGUI = new OptionGUI(this);
+        
     }
     
     
@@ -80,7 +92,7 @@ public class PlayScreen implements Screen {
         }
         
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            showNetworkGUI = !showNetworkGUI;
+            showOptionGUI = !showOptionGUI;
         }
         
         if (GM.getPlayer() == null) {
@@ -174,14 +186,33 @@ public class PlayScreen implements Screen {
         }
         
         infoGUI.draw();
-        if (showNetworkGUI) {
-            networkGUI.draw();
+        if (showOptionGUI) {
+            optionGUI.draw();
+        }
+        
+        if (restart) {
+            game.setScreen(new PlayScreen(game));
+            return;
+        }
+        
+        if (backToMainMenu) {
+            game.setScreen(new MainMenuScreen(game));
+            return;
         }
     }
-
+    
+    public void restart() {
+        restart = true;
+    }
+    
+    public void backToMainMenu() {
+        backToMainMenu = true;
+    }
+ 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
+        optionGUI.resize(width, height);
     }
 
     @Override
@@ -204,7 +235,7 @@ public class PlayScreen implements Screen {
         batch.dispose();
         world.dispose();
         infoGUI.dispose();
-        networkGUI.dispose();
+        optionGUI.dispose();
     }
 
 }

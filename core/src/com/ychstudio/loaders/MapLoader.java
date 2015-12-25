@@ -70,7 +70,9 @@ public class MapLoader {
         }
         else {
         	for (MapObject object : playerLayer.getObjects()) {
-        		Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+        	    // make rectangle a new object to prevent re-correct on the same one after restarting game
+        		Rectangle rectangle = new Rectangle(((RectangleMapObject) object).getRectangle());
+        		
         		correctRectangle(rectangle);
         		
         		GM.player1SpawnPos.set(rectangle.x + rectangle.width / 2f, rectangle.y + rectangle.height / 2f);
