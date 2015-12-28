@@ -12,6 +12,8 @@ import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 import com.ychstudio.MissionPK;
+import com.ychstudio.gamesys.GM;
+import com.ychstudio.network.GameServer;
 
 public class MainMenuScreen implements Screen {
     
@@ -21,7 +23,12 @@ public class MainMenuScreen implements Screen {
     private Stage stage;
     
     private VisTable mainTable;
-    private VisTable networkTable;
+    private VisTable multiplayerTable;
+    private VisTable hostTable;
+    private VisTable clientTable;
+    private VisWindow window;
+    
+    private VisTable currentTable;
     
     private FitViewport viewport;
     
@@ -49,8 +56,7 @@ public class MainMenuScreen implements Screen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                mainTable.setVisible(false);
-                networkTable.setVisible(true);
+                changeToTable(multiplayerTable);
             }
             
         });
@@ -67,8 +73,23 @@ public class MainMenuScreen implements Screen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                mainTable.setVisible(true);
-                networkTable.setVisible(false);
+                changeToTable(hostTable);
+                
+                if (GM.getInstance().gameServer != null) {
+                    GM.getInstance().gameServer.dispose();
+                }
+                GM.getInstance().gameServer = new GameServer();
+                GM.getInstance().gameServer.start();
+            }
+            
+        });
+        
+        VisTextButton clientButton = new VisTextButton("Client");
+        clientButton.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                changeToTable(clientTable);
             }
             
         });
@@ -78,31 +99,74 @@ public class MainMenuScreen implements Screen {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                mainTable.setVisible(true);
-                networkTable.setVisible(false);
+                changeToTable(mainTable);
             }
             
         });
         
         
-        // TODO layout problem
-        networkTable = new VisTable();
-        networkTable.top().center();
-        networkTable.add(hostButton).padBottom(12f);
-        networkTable.row();
-        networkTable.add(backToMainMenuButton);
+        multiplayerTable = new VisTable();
+        multiplayerTable.top().center();
+        multiplayerTable.add(hostButton).padBottom(12f);
+        multiplayerTable.row();
+        multiplayerTable.add(clientButton).padBottom(12f);
+        multiplayerTable.row();
+        multiplayerTable.add(backToMainMenuButton);
         
-        networkTable.setVisible(false);
+        hostTable = new VisTable();
+        VisTextButton startButton = new VisTextButton("Start");
+        VisTextButton closeButton = new VisTextButton("Close");
+        closeButton.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (GM.getInstance().gameServer != null) {
+                    GM.getInstance().gameServer.stop();
+                }
+
+                changeToTable(multiplayerTable);
+            }
+            
+        });
+        hostTable.add(startButton).pad(6f);
+        hostTable.add(closeButton).pad(6f);
         
-        VisWindow window = new VisWindow("Mission PK");
-        window.add(mainTable);
-        window.add(networkTable);
-        window.setSize(320f, 240f);
+        
+        clientTable = new VisTable();
+        VisTextButton connectButton = new VisTextButton("Connect");
+        VisTextButton disconnectButton = new VisTextButton("Disconnect");
+        disconnectButton.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                changeToTable(multiplayerTable);
+            }
+            
+        });
+        
+        clientTable.add(connectButton).pad(6f);
+        clientTable.add(disconnectButton).pad(6f);
+        
+        
+        window = new VisWindow("Mission PK");
+        window.setSize(320f, 360f);
         
         window.setPosition((Gdx.graphics.getWidth() - window.getWidth()) / 2, (Gdx.graphics.getHeight() - window.getHeight()) / 2); 
         
         stage.addActor(window);
         Gdx.input.setInputProcessor(stage);
+        
+        // make mainTable the current table
+        changeToTable(mainTable);
+    }
+    
+    private void changeToTable(VisTable targetTable) {
+        if (currentTable != null) {
+            currentTable.remove();
+        }
+        
+        currentTable = targetTable;
+        window.add(currentTable);
     }
 
     @Override

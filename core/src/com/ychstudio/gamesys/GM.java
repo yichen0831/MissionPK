@@ -12,6 +12,8 @@ import com.badlogic.gdx.utils.Array;
 import com.ychstudio.actors.AbstractActor;
 import com.ychstudio.actors.Player;
 import com.ychstudio.actors.tiles.TileActor;
+import com.ychstudio.network.GameClient;
+import com.ychstudio.network.GameServer;
 import com.ychstudio.screens.PlayScreen;
 
 public class GM {
@@ -46,6 +48,10 @@ public class GM {
     // player spawn positions
     public static final Vector2 player1SpawnPos = new Vector2();
     public static final Vector2 player2SpawnPos = new Vector2();
+    
+    // network server/client
+    public GameServer gameServer;
+    public GameClient gameClient;
     
     private GM() {
 
@@ -128,6 +134,13 @@ public class GM {
         assetManager.dispose();
         actorList.clear();
         tileList.clear();
+        
+        if (gameServer != null) {
+            gameServer.dispose();
+        }
+        if (gameClient != null) {
+            gameClient.dispose();
+        }
     }
     
 }

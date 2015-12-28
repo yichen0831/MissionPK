@@ -68,15 +68,18 @@ public class GameServer implements Disposable {
     
     public void start() {
         server.start();
+        udpServer.start();
     }
     
     public void stop() {
         server.stop();
+        udpServer.stop();
     }
 
     @Override
     public void dispose() {
         server.close();
+        udpServer.close();
     }
 
 }
