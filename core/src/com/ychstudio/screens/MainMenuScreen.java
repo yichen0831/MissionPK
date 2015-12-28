@@ -20,6 +20,9 @@ public class MainMenuScreen implements Screen {
     private SpriteBatch batch;
     private Stage stage;
     
+    private VisTable mainTable;
+    private VisTable networkTable;
+    
     private FitViewport viewport;
     
     
@@ -42,15 +45,58 @@ public class MainMenuScreen implements Screen {
             }
         });
         VisTextButton multiPlayerButton = new VisTextButton("Multi Player");
+        multiPlayerButton.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                mainTable.setVisible(false);
+                networkTable.setVisible(true);
+            }
+            
+        });
         
-        VisTable mainTable = new VisTable();
+        mainTable = new VisTable();
         mainTable.top().center();
         mainTable.add(singlePlayerButton).padBottom(12f);
         mainTable.row();
         mainTable.add(multiPlayerButton);
         
+        
+        VisTextButton hostButton = new VisTextButton("Host");
+        hostButton.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                mainTable.setVisible(true);
+                networkTable.setVisible(false);
+            }
+            
+        });
+        
+        VisTextButton backToMainMenuButton = new VisTextButton("Back to MainMenu");
+        backToMainMenuButton.addListener(new ClickListener() {
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                mainTable.setVisible(true);
+                networkTable.setVisible(false);
+            }
+            
+        });
+        
+        
+        // TODO layout problem
+        networkTable = new VisTable();
+        networkTable.top().center();
+        networkTable.add(hostButton).padBottom(12f);
+        networkTable.row();
+        networkTable.add(backToMainMenuButton);
+        
+        networkTable.setVisible(false);
+        
         VisWindow window = new VisWindow("Mission PK");
         window.add(mainTable);
+        window.add(networkTable);
         window.setSize(320f, 240f);
         
         window.setPosition((Gdx.graphics.getWidth() - window.getWidth()) / 2, (Gdx.graphics.getHeight() - window.getHeight()) / 2); 
