@@ -13,6 +13,7 @@ import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
 import com.ychstudio.MissionPK;
 import com.ychstudio.gamesys.GM;
+import com.ychstudio.network.GameClient;
 import com.ychstudio.network.GameServer;
 
 public class MainMenuScreen implements Screen {
@@ -80,6 +81,14 @@ public class MainMenuScreen implements Screen {
                 }
                 GM.getInstance().gameServer = new GameServer();
                 GM.getInstance().gameServer.start();
+                
+                // connect to the server 
+                 if (GM.getInstance().gameClient != null) {
+                     GM.getInstance().gameClient.dispose();
+                 }
+                 
+                 GM.getInstance().gameClient = new GameClient("localhost");
+                 
             }
             
         });
@@ -90,6 +99,13 @@ public class MainMenuScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 changeToTable(clientTable);
+                
+                if (GM.getInstance().gameClient != null) {
+                    GM.getInstance().gameClient.dispose();
+                }
+                
+                // TODO search LAN and manually enter IP address
+                GM.getInstance().gameClient = new GameClient("localhost");
             }
             
         });
@@ -114,6 +130,7 @@ public class MainMenuScreen implements Screen {
         multiplayerTable.add(backToMainMenuButton);
         
         hostTable = new VisTable();
+        // TODO add player list
         VisTextButton startButton = new VisTextButton("Start");
         VisTextButton closeButton = new VisTextButton("Close");
         closeButton.addListener(new ClickListener() {

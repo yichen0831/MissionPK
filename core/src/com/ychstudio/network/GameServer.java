@@ -1,19 +1,27 @@
 package com.ychstudio.network;
 
 import java.io.IOException;
-import java.util.HashSet;
 
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.ychstudio.network.Network.LoginApprove;
+import com.ychstudio.network.Network.LoginReject;
+import com.ychstudio.network.Network.LoginRequest;
+import com.ychstudio.network.Network.LoginRequire;
+import com.ychstudio.network.Network.NewPlayerLogin;
+import com.ychstudio.network.Network.PlayerLogout;
 
 public class GameServer implements Disposable {
     
     Server server;
     Server udpServer; // for broadcasting
     
-    HashSet<LoggedInPlayer> players;
+    Array<LoggedInPlayer> players;
+    
+    private boolean gameStarted = false;
     
     class LoggedInPlayer {
         public int id;
@@ -26,6 +34,8 @@ public class GameServer implements Disposable {
     }
     
     public GameServer() {
+        players = new Array<>();
+        
         udpServer = new Server();
         try {
             udpServer.bind(Network.FAKE_PORT, Network.UDP_PORT);
@@ -47,14 +57,79 @@ public class GameServer implements Disposable {
 
             @Override
             public void connected(Connection connection) {
+                LoginRequire loginRequire = new LoginRequire();
+                connection.sendTCP(loginRequire);
             }
 
             @Override
             public void disconnected(Connection connection) {
+                PlayerConnection playerConnection = (PlayerConnection) connection;
+                // if not logged in, ignore
+                if (playerConnection.player == null) {
+                    return;
+                }
+                
+                PlayerLogout playerLogout = new PlayerLogout();
+                playerLogout.id = playerConnection.player.id;
+                
+                server.sendToAllTCP(playerLogout);
+                
+                for (int i = players.size - 1; i >=0; i--) {
+                    if (players.get(i).id == playerConnection.player.id) {
+                        players.removeIndex(i);
+                    }
+                }
             }
 
             @Override
             public void received(Connection connection, Object object) {
+                PlayerConnection playerConnection = (PlayerConnection) connection;
+                
+                if (object instanceof LoginRequest) {
+                    // if already logged in, ignore
+                    if (playerConnection.player != null) {
+                        return;
+                    }
+                    
+                    // game already started, no more login
+                    if (gameStarted) {
+                        LoginReject loginReject = new LoginReject();
+                        playerConnection.sendTCP(loginReject);
+                        return;
+                    }
+                    
+                    // remove existing id
+                    for (int i = players.size - 1; i >= 0; i--) {
+                        if (players.get(i).id == connection.getID()) {
+                            players.removeIndex(i);
+                        }
+                    }
+                    
+                    // approve connection 
+                    LoggedInPlayer player = new LoggedInPlayer();
+                    player.id = connection.getID();
+                    playerConnection.player = player;
+                    
+                    players.add(player);
+                    
+                    // announce to existing connections
+                    NewPlayerLogin newPlayerLogin = new NewPlayerLogin();
+                    newPlayerLogin.id = player.id;
+                    server.sendToAllExceptTCP(connection.getID(), newPlayerLogin);
+                    
+                    LoginApprove loginApprove = new LoginApprove();
+                    loginApprove.id = player.id;
+                    
+                    playerConnection.sendTCP(loginApprove);
+                    
+                    // announce existing players to the new player
+                    for (LoggedInPlayer p : players) {
+                        NewPlayerLogin npl = new NewPlayerLogin();
+                        npl.id = p.id;
+                        connection.sendTCP(npl);
+                    }
+                    return;
+                }
             }
             
         });
@@ -74,6 +149,10 @@ public class GameServer implements Disposable {
     public void stop() {
         server.stop();
         udpServer.stop();
+    }
+    
+    public void setGameStarted() {
+        gameStarted= true;
     }
 
     @Override

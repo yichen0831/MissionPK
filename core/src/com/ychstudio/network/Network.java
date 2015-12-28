@@ -16,6 +16,9 @@ public class Network {
         kryo.register(LoginRequest.class);
         kryo.register(LoginApprove.class);
         kryo.register(LoginReject.class);
+        kryo.register(NewPlayerLogin.class);
+        kryo.register(PlayerLogout.class);
+        kryo.register(StartGame.class);
         kryo.register(UpdatePosition.class);
         kryo.register(Shoot.class);
         kryo.register(ThrowGrenade.class);
@@ -31,10 +34,23 @@ public class Network {
     }
     
     public static class LoginApprove {
+        public int id;
         
     }
     
+    public static class NewPlayerLogin {
+        public int id;
+    }
+    
+    public static class PlayerLogout {
+        public int id;
+    }
+    
     public static class LoginReject {
+        
+    }
+    
+    public static class StartGame {
         
     }
     

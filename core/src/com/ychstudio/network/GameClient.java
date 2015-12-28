@@ -6,10 +6,16 @@ import com.badlogic.gdx.utils.Disposable;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.ychstudio.network.Network.LoginApprove;
+import com.ychstudio.network.Network.LoginRequest;
+import com.ychstudio.network.Network.LoginRequire;
+import com.ychstudio.network.Network.NewPlayerLogin;
+import com.ychstudio.network.Network.PlayerLogout;
 
 public class GameClient implements Disposable {
     
     Client client;
+    int id;
     
     public GameClient(String host) {
         client = new Client();
@@ -19,15 +25,40 @@ public class GameClient implements Disposable {
 
             @Override
             public void connected(Connection connection) {
-                // send login request
             }
 
             @Override
             public void received(Connection connection, Object object) {
+                
+                if (object instanceof LoginRequire) {
+                    // send login request
+                    LoginRequest loginRequest = new LoginRequest();
+                    connection.sendTCP(loginRequest);
+                    return;
+                }
+                
+                if (object instanceof LoginApprove) {
+                    LoginApprove loginApprove = (LoginApprove) object;
+                    id = loginApprove.id;
+                    System.out.println("Login success @id: " + id);
+                    return;
+                }
+                
+                if (object instanceof NewPlayerLogin) {
+                    NewPlayerLogin npl = (NewPlayerLogin) object;
+                    System.out.println("NewPlayerLogin @id: " + npl.id);
+                    return;
+                }
+                
+                if (object instanceof PlayerLogout) {
+                    PlayerLogout playerLogout = (PlayerLogout) object;
+                    System.out.println("Player logout @id: " + playerLogout.id);
+                }
             }
             
             @Override
             public void disconnected(Connection connection) {
+                System.out.println("Disconnected from server...");
             }
         });
         
