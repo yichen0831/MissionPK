@@ -7,7 +7,12 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.kotcrab.vis.ui.widget.VisList;
+import com.kotcrab.vis.ui.widget.VisScrollPane;
 import com.kotcrab.vis.ui.widget.VisTable;
 import com.kotcrab.vis.ui.widget.VisTextButton;
 import com.kotcrab.vis.ui.widget.VisWindow;
@@ -15,6 +20,8 @@ import com.ychstudio.MissionPK;
 import com.ychstudio.gamesys.GM;
 import com.ychstudio.network.GameClient;
 import com.ychstudio.network.GameServer;
+import com.ychstudio.network.Network.LoggedInPlayer;
+import com.ychstudio.network.Network.LoginRequest;
 
 public class MainMenuScreen implements Screen {
     
@@ -22,6 +29,9 @@ public class MainMenuScreen implements Screen {
     
     private SpriteBatch batch;
     private Stage stage;
+    
+    private Array<LoggedInPlayer> players;
+    private VisList<String> playerList;
     
     private VisTable mainTable;
     private VisTable multiplayerTable;
@@ -32,6 +42,25 @@ public class MainMenuScreen implements Screen {
     private VisTable currentTable;
     
     private FitViewport viewport;
+    
+    private boolean needUpdatePlayerList = false;
+    
+    
+    class ServerListener extends Listener {
+
+        @Override
+        public void disconnected(Connection connection) {
+            needUpdatePlayerList = true;
+        }
+
+        @Override
+        public void received(Connection connection, Object object) {
+            if (object instanceof LoginRequest) {
+                needUpdatePlayerList = true;
+            }
+        }
+        
+    }
     
     
     public MainMenuScreen(MissionPK game) {
@@ -62,6 +91,7 @@ public class MainMenuScreen implements Screen {
             
         });
         
+        // -- main table --
         mainTable = new VisTable();
         mainTable.top().center();
         mainTable.add(singlePlayerButton).padBottom(12f);
@@ -80,7 +110,10 @@ public class MainMenuScreen implements Screen {
                     GM.getInstance().gameServer.dispose();
                 }
                 GM.getInstance().gameServer = new GameServer();
+                GM.getInstance().gameServer.addListener(new ServerListener());
                 GM.getInstance().gameServer.start();
+                
+                players = GM.getInstance().gameServer.getPlayers();
                 
                 // connect to the server 
                  if (GM.getInstance().gameClient != null) {
@@ -121,6 +154,7 @@ public class MainMenuScreen implements Screen {
         });
         
         
+        // -- multiplayer table --
         multiplayerTable = new VisTable();
         multiplayerTable.top().center();
         multiplayerTable.add(hostButton).padBottom(12f);
@@ -129,8 +163,16 @@ public class MainMenuScreen implements Screen {
         multiplayerTable.row();
         multiplayerTable.add(backToMainMenuButton);
         
+        
+        // -- host table --
         hostTable = new VisTable();
-        // TODO add player list
+        // player list
+        playerList = new VisList<>();
+        playerList.setFillParent(true);
+        
+        VisScrollPane scrollPane = new VisScrollPane(playerList);
+        scrollPane.setFillParent(true);
+        
         VisTextButton startButton = new VisTextButton("Start");
         VisTextButton closeButton = new VisTextButton("Close");
         closeButton.addListener(new ClickListener() {
@@ -145,10 +187,13 @@ public class MainMenuScreen implements Screen {
             }
             
         });
+        hostTable.add(scrollPane).padBottom(6f);
+        hostTable.row();
         hostTable.add(startButton).pad(6f);
         hostTable.add(closeButton).pad(6f);
         
         
+        // -- client table --
         clientTable = new VisTable();
         VisTextButton connectButton = new VisTextButton("Connect");
         VisTextButton disconnectButton = new VisTextButton("Disconnect");
@@ -165,6 +210,7 @@ public class MainMenuScreen implements Screen {
         clientTable.add(disconnectButton).pad(6f);
         
         
+        // -- window --
         window = new VisWindow("Mission PK");
         window.setSize(320f, 360f);
         
@@ -185,9 +231,23 @@ public class MainMenuScreen implements Screen {
         currentTable = targetTable;
         window.add(currentTable);
     }
+    
+    public void updatePlayerList() {
+        Array<String> playerInfo = new Array<>();
+        
+        for (int i = 0; i < players.size; i++) {
+            playerInfo.add("ID: " + players.get(i).id + "  -  " + players.get(i).hostString);
+        }
+        
+        playerList.setItems(playerInfo);
+    }
 
     @Override
     public void render(float delta) {
+        if (needUpdatePlayerList) {
+           updatePlayerList();
+           needUpdatePlayerList = false;
+        }
         
         Gdx.gl.glClearColor(0.607843137f, 0.737254902f, 0.058823529f, 1.0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

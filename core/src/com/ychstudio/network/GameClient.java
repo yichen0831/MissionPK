@@ -46,7 +46,7 @@ public class GameClient implements Disposable {
                 
                 if (object instanceof NewPlayerLogin) {
                     NewPlayerLogin npl = (NewPlayerLogin) object;
-                    System.out.println("NewPlayerLogin @id: " + npl.id);
+                    System.out.println("NewPlayerLogin @id: " + npl.player.id);
                     return;
                 }
                 

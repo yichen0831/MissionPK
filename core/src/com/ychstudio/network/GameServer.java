@@ -7,6 +7,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.ychstudio.network.Network.LoggedInPlayer;
 import com.ychstudio.network.Network.LoginApprove;
 import com.ychstudio.network.Network.LoginReject;
 import com.ychstudio.network.Network.LoginRequest;
@@ -22,12 +23,6 @@ public class GameServer implements Disposable {
     Array<LoggedInPlayer> players;
     
     private boolean gameStarted = false;
-    
-    class LoggedInPlayer {
-        public int id;
-        public float x;
-        public float y;
-    }
     
     class PlayerConnection extends Connection {
         public LoggedInPlayer player;
@@ -108,13 +103,15 @@ public class GameServer implements Disposable {
                     // approve connection 
                     LoggedInPlayer player = new LoggedInPlayer();
                     player.id = connection.getID();
+                    player.hostString = connection.getRemoteAddressTCP().getHostString();
+                    player.port = connection.getRemoteAddressTCP().getPort();
                     playerConnection.player = player;
                     
                     players.add(player);
                     
                     // announce to existing connections
                     NewPlayerLogin newPlayerLogin = new NewPlayerLogin();
-                    newPlayerLogin.id = player.id;
+                    newPlayerLogin.player = player;
                     server.sendToAllExceptTCP(connection.getID(), newPlayerLogin);
                     
                     LoginApprove loginApprove = new LoginApprove();
@@ -125,7 +122,7 @@ public class GameServer implements Disposable {
                     // announce existing players to the new player
                     for (LoggedInPlayer p : players) {
                         NewPlayerLogin npl = new NewPlayerLogin();
-                        npl.id = p.id;
+                        npl.player = p;
                         connection.sendTCP(npl);
                     }
                     return;
@@ -151,8 +148,20 @@ public class GameServer implements Disposable {
         udpServer.stop();
     }
     
+    public void addListener(Listener listener) {
+        server.addListener(listener);
+    }
+    
+    public void removeListener(Listener listener) {
+        server.removeListener(listener);
+    }
+    
     public void setGameStarted() {
         gameStarted= true;
+    }
+    
+    public Array<LoggedInPlayer> getPlayers() {
+        return players;
     }
 
     @Override

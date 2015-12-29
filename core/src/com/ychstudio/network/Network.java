@@ -1,5 +1,7 @@
 package com.ychstudio.network;
 
+import java.net.InetSocketAddress;
+
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.EndPoint;
 
@@ -12,6 +14,7 @@ public class Network {
     
     public static void register(EndPoint endPoint) {
         Kryo kryo = endPoint.getKryo();
+        kryo.register(LoggedInPlayer.class);
         kryo.register(LoginRequire.class);
         kryo.register(LoginRequest.class);
         kryo.register(LoginApprove.class);
@@ -22,7 +25,17 @@ public class Network {
         kryo.register(UpdatePosition.class);
         kryo.register(Shoot.class);
         kryo.register(ThrowGrenade.class);
+        kryo.register(InetSocketAddress.class);
+    }
+    
+    public static class LoggedInPlayer {
+        public String name;
+        public int id;
+        public float x;
+        public float y;
         
+        public String hostString;
+        public int port;
     }
     
     public static class LoginRequire {
@@ -39,7 +52,8 @@ public class Network {
     }
     
     public static class NewPlayerLogin {
-        public int id;
+        public LoggedInPlayer player;
+        
     }
     
     public static class PlayerLogout {
